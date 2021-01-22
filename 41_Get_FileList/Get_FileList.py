@@ -54,15 +54,16 @@ def get_all_dirs_walk(path):
     print(len(file_lists))
 
 path = r'\\172.20.4.132\fs02\CE\V3\loop06\run_1121'
-# start = time.time()
-# get_all_dirs_deep(path)
-# finish = time.time()
-# print('deep total time:', finish-start)
-#
-# start = time.time()
-# get_all_dirs_wide(path)
-# finish = time.time()
-# print('wide total time:', finish-start)
+
+start = time.time()
+get_all_dirs_deep(path)
+finish = time.time()
+print('deep total time:', finish-start)
+
+start = time.time()
+get_all_dirs_wide(path)
+finish = time.time()
+print('wide total time:', finish-start)
 
 start = time.time()
 get_all_dirs_walk(path)
