@@ -505,8 +505,7 @@ class JoblistWindow(QMainWindow):
 
         self.line4 = MyQLineEdit()
         self.line4.setFont(self.cont_font)
-        self.line4.setPlaceholderText("If blank, old joblist name with data suffix will be used")
-        # self.line4.setToolTip('new joblist name, default as the old one with "_new" extension')
+        self.line4.setPlaceholderText("If blank, old joblist name with date suffix will be used")
 
         self.label7 = QLabel("Joblist path")
         self.label7.setFont(self.cont_font)
