@@ -324,8 +324,6 @@ class modify_joblist(object):
                 if '<ResultDir>' in line and self.run_path:
                     temp = line.split('>')
                     old_path = temp[1].split('<')[0]
-                    # dlc_path = '\\'.join(old_path.split('\\')[-2:])
-                    # new_path = self.run_path.replace('/', '\\') + os.sep + dlc_path
                     new_path = old_path.replace(self.old_run_path, self.run_path)
 
                     line = temp[0] + '>' + new_path + '</ResultDir>' + '\n'
@@ -447,7 +445,6 @@ class JoblistWindow(QMainWindow):
 
         self.line1 = MyQLineEdit()
         self.line1.setFont(self.cont_font)
-        # self.line1.setPlaceholderText("Pick joblist file")
 
         self.btn1 = QPushButton("...")
         self.btn1.setFont(self.cont_font)
@@ -556,9 +553,6 @@ class JoblistWindow(QMainWindow):
         self.grid1.addWidget(self.label1, 0, 0, 1, 1)
         self.grid1.addWidget(self.line1,  0, 1, 1, 5)
         self.grid1.addWidget(self.btn1,   0, 6, 1, 1)
-        # self.grid1.addWidget(self.label3, 2, 0, 1, 1)
-        # self.grid1.addWidget(self.line3,  2, 1, 1, 5)
-        # self.grid1.addWidget(self.btn3,   2, 6, 1, 1)
         self.sub1.setLayout(self.grid1)
 
         # new joblist
