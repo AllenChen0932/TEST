@@ -1,0 +1,267 @@
+#Pitch_Bearing_blade1
+DLC12,DLC24a,DLC24b,DLC24c,DLC24d,DLC31,DLC41,DLC64,DLC16b,DLC65b
+Blade 1 pitch angle,deg
+Blade 1 pitch rate,deg/s
+Blade root 1 Mx,kNm
+Blade root 1 My,kNm
+Blade root 1 Mz,kNm
+Blade root 1 Fx,kN
+Blade root 1 Fy,kN
+Blade root 1 Fz,kN
+#
+
+#Pitch_Bearing_blade2
+DLC12,DLC24a,DLC24b,DLC24c,DLC24d,DLC31,DLC41,DLC64,DLC16b,DLC65b
+Blade 2 pitch angle,deg
+Blade 2 pitch rate,deg/s
+Blade root 2 Mx,kNm
+Blade root 2 My,kNm
+Blade root 2 Mz,kNm
+Blade root 2 Fx,kN
+Blade root 2 Fy,kN
+Blade root 2 Fz,kN
+#
+
+#Pitch_Bearing_blade3
+DLC12,DLC24a,DLC24b,DLC24c,DLC24d,DLC31,DLC41,DLC64,DLC16b,DLC65b
+Blade 3 pitch angle,deg
+Blade 3 pitch rate,deg/s
+Blade root 3 Mx,kNm
+Blade root 3 My,kNm
+Blade root 3 Mz,kNm
+Blade root 3 Fx,kN
+Blade root 3 Fy,kN
+Blade root 3 Fz,kN
+#
+
+#Pitch_Bearing_Gear
+DLC12,DLC14,DLC21a,DLC22e,DLC22f,DLC23,DLC24a,DLC24b,DLC24c,DLC24d,DLC31,DLC41,DLC61,DLC62,DLC63,DLC64,DLC16b,DLC65b
+Blade 1 pitch angle,deg
+Blade 2 pitch angle,deg
+Blade 3 pitch angle,deg
+Blade 1 pitch rate,deg/s
+Blade 2 pitch rate,deg/s
+Blade 3 pitch rate,deg/s
+Blade 1 pitch acceleration,deg/s^2
+Blade 2 pitch acceleration,deg/s^2
+Blade 3 pitch acceleration,deg/s^2
+Blade 1 controller demanded pitch angle,deg
+Blade 2 controller demanded pitch angle,deg
+Blade 3 controller demanded pitch angle,deg
+Blade root 1 Mx,kNm
+Blade root 1 My,kNm
+Blade root 1 Mz,kNm
+Blade root 1 Fx,kN
+Blade root 1 Fy,kN
+Blade root 1 Fz,kN
+Blade root 2 Mx,kNm
+Blade root 2 My,kNm
+Blade root 2 Mz,kNm
+Blade root 2 Fx,kN
+Blade root 2 Fy,kN
+Blade root 2 Fz,kN
+Blade root 3 Mx,kNm
+Blade root 3 My,kNm
+Blade root 3 Mz,kNm
+Blade root 3 Fx,kN
+Blade root 3 Fy,kN
+Blade root 3 Fz,kN
+#
+
+#Pitch_Lock
+DLC81a,DLC81c
+Blade root 1 Fx,kN
+Blade root 1 Fy,kN
+Blade root 1 Fz,kN
+Blade root 1 Mx,kNm
+Blade root 1 My,kNm
+Blade root 1 Mz,kNm
+Blade root 2 Fx,kN
+Blade root 2 Fy,kN
+Blade root 2 Fz,kN
+Blade root 2 Mx,kNm
+Blade root 2 My,kNm
+Blade root 2 Mz,kNm
+Blade root 3 Fx,kN
+Blade root 3 Fy,kN
+Blade root 3 Fz,kN
+Blade root 3 Mx,kNm
+Blade root 3 My,kNm
+Blade root 3 Mz,kNm
+#
+
+#Pitch_System_Hydraulic
+DLC12,DLC13_2.0,DLC14,DLC15,DLC21a,DLC22e,DLC22f,DLC22a,DLC22b,DLC22d,DLC23,DLC24a,DLC24b,DLC24c,DLC24d,DLC31,DLC41,DLC42,DLC51,DLC16b
+Hub wind speed magnitude,m/s
+Rotor speed,deg/s
+Blade 1 pitch angle,deg
+Blade 2 pitch angle,deg
+Blade 3 pitch angle,deg
+Blade 1 controller demanded pitch angle,deg
+Blade 2 controller demanded pitch angle,deg
+Blade 3 controller demanded pitch angle,deg
+Blade 1 pitch rate,deg/s
+Blade 2 pitch rate,deg/s
+Blade 3 pitch rate,deg/s
+Blade root 1 Mz,kNm
+Blade root 2 Mz,kNm
+Blade root 3 Mz,kNm
+Blade 1 Pitch actuator torque,kNm
+Blade 2 Pitch actuator torque,kNm
+Blade 3 Pitch actuator torque,kNm
+Blade 1 Pitching inertia,Kgm^2
+Blade 2 Pitching inertia,Kgm^2
+Blade 3 Pitching inertia,Kgm^2
+#
+
+#Pitch_System_Electrical
+DLC12,DLC14,DLC21a,DLC22e,DLC22f,DLC22a,DLC22b,DLC22d,DLC23,DLC42,DLC62,DLC16b
+Blade 1 pitch angle,deg
+Blade 2 pitch angle,deg
+Blade 3 pitch angle,deg
+Blade 1 pitch rate,deg/s
+Blade 2 pitch rate,deg/s
+Blade 3 pitch rate,deg/s
+Blade 1 pitch acceleration,deg/s^2
+Blade 2 pitch acceleration,deg/s^2
+Blade 3 pitch acceleration,deg/s^2
+Blade 1 controller demanded pitch angle,deg
+Blade 2 controller demanded pitch angle,deg
+Blade 3 controller demanded pitch angle,deg
+Blade root 1 Mx,kNm
+Blade root 1 My,kNm
+Blade root 1 Mz,kNm
+Blade root 1 Fx,kN
+Blade root 1 Fy,kN
+Blade root 1 Fz,kN
+Blade root 2 Mx,kNm
+Blade root 2 My,kNm
+Blade root 2 Mz,kNm
+Blade root 2 Fx,kN
+Blade root 2 Fy,kN
+Blade root 2 Fz,kN
+Blade root 3 Mx,kNm
+Blade root 3 My,kNm
+Blade root 3 Mz,kNm
+Blade root 3 Fx,kN
+Blade root 3 Fy,kN
+Blade root 3 Fz,kN
+#
+
+#Gearbox
+DLC12,DLC24a,DLC24b,DLC24c,DLC24d,DLC31,DLC41,DLC64,DLC16b,DLC65b
+Rotor speed, rpm
+Cup anemometer wind speed, m/s
+Rotating hub Mx, kNm
+Rotating hub My, kNm
+Rotating hub Mz, kNm
+Rotating hub Fx, kN
+Rotating hub Fy, kN
+Rotating hub Fz, kN
+Stationary hub Mx, kNm
+Stationary hub My, kNm
+Stationary hub Mz, kNm
+Stationary hub Fx, kN
+Stationary hub Fy, kN
+Stationary hub Fz, kN
+#
+
+#Hub_Check
+DLC12,DLC24a,DLC24b,DLC24c,DLC24d,DLC31,DLC41,DLC64,DLC16b,DLC65b
+Blade root 1 Mx,kNm
+Blade root 1 My,kNm
+Blade root 1 Mxy,kNm
+Blade root 1 Mz,kNm
+Blade root 1 Fx,kN
+Blade root 1 Fy,kN
+Blade root 1 Fxy,kN
+Blade root 1 Fz,kN
+Blade root 2 Mx,kNm
+Blade root 2 My,kNm
+Blade root 2 Mxy,kNm
+Blade root 2 Mz,kNm
+Blade root 2 Fx,kN
+Blade root 2 Fy,kN
+Blade root 2 Fxy,kN
+Blade root 2 Fz,kN
+Blade root 3 Mx,kNm
+Blade root 3 My,kNm
+Blade root 3 Mxy,kNm
+Blade root 3 Mz,kNm
+Blade root 3 Fx,kN
+Blade root 3 Fy,kN
+Blade root 3 Fxy,kN
+Blade root 3 Fz,kN
+#
+
+#Main_Shaft&Bearing_r
+DLC12,DLC24a,DLC24b,DLC24c,DLC24d,DLC31,DLC41,DLC64,DLC16b,DLC65b
+Rotor azimuth angle,deg
+Rotor speed,deg/s
+Rotating hub Mx,kNm
+Rotating hub My,kNm
+Rotating hub Mz,kNm
+Rotating hub Fx,kN
+Rotating hub Fy,kN
+Rotating hub Fz,kN
+#
+
+#Main_Shaft&Bearing_s
+DLC12,DLC24a,DLC24b,DLC24c,DLC24d,DLC31,DLC41,DLC64,DLC16b,DLC65b
+Rotor azimuth angle,deg
+Rotor speed,deg/s
+Stationary hub Mx,kNm
+Stationary hub My,kNm
+Stationary hub Mz,kNm
+Stationary hub Fx,kN
+Stationary hub Fy,kN
+Stationary hub Fz,kN
+#
+
+#Yaw_Bearing
+DLC12,DLC24a,DLC24b,DLC24c,DLC24d,DLC31,DLC41,DLC64,DLC16b,DLC65b
+Yaw bearing Mx,kNm
+Yaw bearing My,kNm
+Yaw bearing Mz,kNm
+Yaw bearing Fx,kN
+Yaw bearing Fy,kN
+Yaw bearing Fz,kN
+#
+
+#Nacelle_Acceleration
+DLC12,DLC24a,DLC24b,DLC24c,DLC24d,DLC31,DLC41,DLC64,DLC16b,DLC65b
+Nacelle fore-aft acceleration,m/s^2
+Nacelle side-side acceleration,m/s^2
+Nacelle roll acceleration,deg/s^2
+Nacelle nod acceleration,deg/s^2
+Nacelle yaw acceleration,deg/s^2
+#
+
+#Generator_Touque
+DLC12,DLC24a,DLC24b,DLC24c,DLC24d,DLC31,DLC41
+Generator torque,kNm
+#
+
+#Tower_Section, flex, ascii
+DLC12,DLC24a,DLC24b,DLC24c,DLC24d,DLC31,DLC41,DLC64,DLC16b,DLC65b
+!DO NOT CHANGE THE VARIABLES LIST BELOW
+Tower Mx, kNm
+Tower My, kNm
+Tower Mz, kNm
+Tower Fx, kN
+Tower Fy, kN
+Tower Fz, kN
+Section,b2t,1,19,40,58,76
+#
+
+#Blade_Section, flex, binary, 4
+DLC12,DLC24a,DLC24b,DLC24c,DLC24d,DLC31,DLC41,DLC64,DLC16b,DLC65b
+!DO NOT CHANGE THE VARIABLES LIST BELOW
+Blade 1 Mx (User axes), kNm
+Blade 1 My (User axes), kNm
+Blade 1 Mz (User axes), kNm
+Blade 1 Fx (User axes), kN
+Blade 1 Fy (User axes), kN
+Blade 1 Fz (User axes), kN
+Section,all
+#

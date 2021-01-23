@@ -1,0 +1,30 @@
+[Slope M]
+blade aerodynamic axes = 4.0
+blade principal axes = 4.0
+blade root axes = 4.0
+blade user axes = 4.0
+blade root = 9.0
+hub rotating = 4.0
+hub stationary = 4.0
+yaw bearing = 4.0
+tower = 4.0
+
+[Gearbox Equivalent Torque]
+m = 3.333333
+
+[Pitch Bearing Life]
+##########################
+#轴承名义直径-m
+#动载荷Ca-N
+#寿命-年
+#滚珠-3/滚子-3.333333
+##########################
+nominal diameter = 3.87
+Ca = 3.1682e6
+life = 25
+m = 3
+
+[Main Bearing Life]
+rate speed = 10.66
+tilt = 6
+
