@@ -573,7 +573,6 @@ class JoblistWindow(QMainWindow):
         self.grid3.addWidget(self.label7, 2, 0, 1, 1)
         self.grid3.addWidget(self.line7,  2, 1, 1, 5)
         self.grid3.addWidget(self.btn4,   2, 6, 1, 1)
-        # self.sub2.setLayout(self.grid3)
 
         self.vbox1  = QVBoxLayout()
         self.vbox1.addWidget(self.sub1)
