@@ -661,23 +661,23 @@ class LoadSumWindow(QMainWindow):
                 row_num = sheet.max_row
                 row_max = row_num-(row_num-1)%5
                 # print(row_num)>
-                self.loopname = [sheet[i][0].value for i in range(2,row_max+1) if sheet[i][2].value ]
+                self.loopname = [sheet[i][0].value for i in range(2,row_max+1) if sheet[i][0].value != None ]
                 self.pst_list = [sheet[i][2].value for i in range(2,row_max+1) if sheet[i][1].value == 'Post']
-                self.dlc_list = [sheet[i][2].value if sheet[i][1].value=='DLC12' else None for i in range(2,row_max+1)]
+                self.dlc_list = [sheet[i][2].value for i in range(2,row_max+1) if sheet[i][1].value == 'DLC12']
                 self.lct_list = [sheet[i][2].value for i in range(2,row_max+1) if sheet[i][1].value == 'LCT']
                 self.ult_list = [sheet[i][2].value for i in range(2,row_max+1) if sheet[i][1].value == 'Ultimate']
                 self.fat_list = [sheet[i][2].value for i in range(2,row_max+1) if sheet[i][1].value == 'Rainflow']
 
-                # print('LPN :', self.loopname)
-                # print('ULT :', self.ult_list)
-                # print('FAT :', self.fat_list)
-                # print('LCT :', self.lct_list)
-                # print('PST :', self.pst_list)
-                # print('L12 :', self.dlc_list)
+                print('LPN :', self.loopname)
+                print('ULT :', self.ult_list)
+                print('FAT :', self.fat_list)
+                print('LCT :', self.lct_list)
+                print('PST :', self.pst_list)
+                print('L12 :', self.dlc_list)
 
                 loop_num = len(self.loopname)
                 # print(loop_num)
-                if self.pst_list:
+                if any(self.pst_list):
                     for i in range(loop_num):
                         post_path = self.pst_list[i]
                         if not os.path.isdir(post_path):
