@@ -199,18 +199,19 @@ class BladedRainflow(object):
         self.main_chan.sort()
 
         # get main channel and tower channel
-        my_del = [val for key, val in self.tower_del.items()]
-        # my_del.sort()
+        if self.tower_del:
+            my_del = [val for key, val in self.tower_del.items()]
+            # my_del.sort()
 
-        min_del   = min(my_del)
-        tower_top = [key for key, val in self.tower_del.items() if val == min_del][0]
-        self.main_chan.append(tower_top)
-        self.chan_tower.append(tower_top)
+            min_del   = min(my_del)
+            tower_top = [key for key, val in self.tower_del.items() if val == min_del][0]
+            self.main_chan.append(tower_top)
+            self.chan_tower.append(tower_top)
 
-        max_del   = max(my_del)
-        tower_bot = [key for key, val in self.tower_del.items() if val == max_del][0]
-        self.main_chan.append(tower_bot)
-        self.chan_tower.append(tower_bot)
+            max_del   = max(my_del)
+            tower_bot = [key for key, val in self.tower_del.items() if val == max_del][0]
+            self.main_chan.append(tower_bot)
+            self.chan_tower.append(tower_bot)
 
     def get_max_blade(self):
         """
