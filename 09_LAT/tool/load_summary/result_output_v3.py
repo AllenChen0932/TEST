@@ -203,12 +203,12 @@ class excel_operation:
         # print(row_max)
 
         print('Begin to read excel...')
-        self.loopname = [sheet[i][0].value for i in range(2,row_max+1) if sheet[i][0].value]
-        self.pst_list = [sheet[i][2].value if sheet[i][1].value=='Post' else None for i in range(2,row_max+1)]
-        self.dlc_list = [sheet[i][2].value if sheet[i][1].value=='DLC12' else None for i in range(2,row_max+1)]
-        self.lct_list = [sheet[i][2].value if sheet[i][1].value=='LCT' else None for i in range(2,row_max+1) ]
-        self.ult_list = [sheet[i][2].value if sheet[i][1].value=='Ultimate' else None for i in range(2,row_max+1)]
-        self.fat_list = [sheet[i][2].value if sheet[i][1].value=='Rainflow' else None for i in range(2,row_max+1) ]
+        self.loopname = [sheet[i][0].value for i in range(2,row_max+1) if sheet[i][0].value != None]
+        self.pst_list = [sheet[i][2].value for i in range(2,row_max+1) if sheet[i][1].value == 'Post']
+        self.dlc_list = [sheet[i][2].value for i in range(2,row_max+1) if sheet[i][1].value == 'DLC12']
+        self.lct_list = [sheet[i][2].value for i in range(2,row_max+1) if sheet[i][1].value == 'LCT']
+        self.ult_list = [sheet[i][2].value for i in range(2,row_max+1) if sheet[i][1].value == 'Ultimate']
+        self.fat_list = [sheet[i][2].value for i in range(2,row_max+1) if sheet[i][1].value == 'Rainflow']
         for i in range(2, row_max+1):
             print(i)
             if sheet[i][1].value == 'Post':
@@ -223,7 +223,7 @@ class excel_operation:
 
         loop_num = len(self.loopname)
 
-        if self.pst_list:
+        if any(self.pst_list):
             for i in range(loop_num):
 
                 post_path = self.pst_list[i]
