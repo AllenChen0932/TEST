@@ -142,10 +142,11 @@ class writeRainflow(object):
                         range_row = np.array(Markov['var_range'][var] / 1000)
                         header  = 'Number of cycles [' + var + '] [.] against Cycle range [kNm]\r\n'
                         header += 'Cycle mean [kNm]\t' + '\t'.join([str(m) for m in range_row]) + '\r'
-                        print(mean_col.shape, mean_col)
+                        # print(mean_col.shape, mean_col)
                         data = np.hstack((mean_col, Markov['var_cycles'][var]))
                         np.savetxt(f, data, header=header, fmt='%.2f' + '\t%.2f'*len(range_row) + '\r', delimiter='\t', comments='')
-                        print(var)
+                        # print(var)
+
         if 'RFC' in self.content:
             raise Exception('For now RFC output at blade/tower stations are not supported!')
         print('%s is done!' %self.rf_path)

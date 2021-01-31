@@ -44,6 +44,7 @@ class writeCompLoads(object):
         self.comppost['fat']['brs']          = os.path.join(self.postpath, r'08_Fatigue\01_BRS\brs1')
         self.comppost['fat']['bus']          = os.path.join(self.postpath, r'08_Fatigue\02_BUS\bus1')
         self.comppost['fat']['br1_Mxy_seg']  = os.path.join(self.postpath, r'08_Fatigue\03_BR_Mxy_Seg\br_comb')
+        self.comppost['fat']['brs_Mxy_seg']  = os.path.join(self.postpath, r'08_Fatigue\04_BRS_Mxy_Seg\brs_comb')
         self.comppost['fat']['brs1_Mxy_seg'] = os.path.join(self.postpath, r'08_Fatigue\04_BRS_Mxy_Seg\brs1_comb')
         self.comppost['fat']['brs2_Mxy_seg'] = os.path.join(self.postpath, r'08_Fatigue\04_BRS_Mxy_Seg\brs2_comb')
         self.comppost['fat']['brs3_Mxy_seg'] = os.path.join(self.postpath, r'08_Fatigue\04_BRS_Mxy_Seg\brs3_comb')
@@ -385,6 +386,10 @@ class writeCompLoads(object):
                     writeUltimate(comppost['ult']['main2_inclsf'], table, sheetname='main_inclsf')
                 table.save(os.path.join(compout['pitchsystem'], 'ultimate_pitch_system.xlsx'))
 
+                table = openpyxl.Workbook()
+                Occurrence(self.lc_table, table, 'occurrence', self.timestep, row_start=1, col_start=1, simple=True)
+                table.save(os.path.join(compout['pitchsystem'], 'Occurrence.xlsx'))
+
         # nac acc
         if 'nacacc' in selcomp.keys():
             if selcomp['nacacc']['ult']:
@@ -420,6 +425,10 @@ class writeCompLoads(object):
                 if selcomp['tower']['ult'] and os.path.isdir(comppost['ult']['tower12']):
                     writeUltimate(comppost['ult']['tower12'], table, sheetname='tower_dlc12', heightflag=False)
                 table.save(os.path.join(compout['tower'], 'ultimate_tower.xlsx'))
+
+                table = openpyxl.Workbook()
+                Occurrence(self.lc_table, table, 'occurrence', self.timestep, row_start=1, col_start=1, simple=True)
+                table.save(os.path.join(compout['tower'], 'Occurrence.xlsx'))
 
     def parseMainPath(self, MainPostPath, flag):
         main_path_dic = {}
