@@ -208,8 +208,9 @@ class LoadOutputWindow(QMainWindow):
         os.startfile(os.getcwd()+os.sep+'user manual\Load Report.docx')
 
     def type_action(self):
-
-        if (self.cbx.currentText() == 'Fatigue') or (self.cbx.currentText() == 'Ultimate'):
+        items = ['All Components', 'Pitch Bearing', 'Main Bearing', 'Main Shaft', 'Gearbox_64', 'Gearbox_144',
+                 'Yaw Bearing', 'Tower']
+        if self.cbx.currentText() not in items:
             self.line4.setDisabled(False)
             self.line5.setDisabled(True)
             self.line3.setDisabled(True)
