@@ -6,10 +6,11 @@
 
 import os
 import numpy as np
+# import pysnooper
 
 class Combination(object):
 
-    def __init__(self, run_path, res_path, fat_list, chan_dict, file_extension, extension):
+    def __init__(self, run_path, res_path, fat_list, chan_dict, file_extension, extension, angle_list):
 
         # self.prj_name = prj_name
         self.run_path = run_path
@@ -18,8 +19,9 @@ class Combination(object):
         self.chan_dict = chan_dict
         self.file_ext  = file_extension
         self.extension = extension
+        self.ang_list = angle_list
 
-        self.ang_list = list(range(0,360,15))
+        # self.ang_list = list(range(0,360,15))
 
         if not os.path.exists(self.res_path):
             os.makedirs(self.res_path)
@@ -32,20 +34,14 @@ class Combination(object):
     def get_loadcase(self):
 
         for lc in self.fat_list:
-
             # eg: run/DLC12
             lc_path = os.path.join(self.run_path, lc)
-            # print(lc_path)
-
             files = os.listdir(lc_path)
-            # print(len(files))
 
             for file in files:
-
                 if os.path.isdir(os.path.join(lc_path, file)):
-
                     self.lc_list.append(os.path.join(lc_path, file))
-
+    # @pysnooper.snoop()
     def pj_content(self, lc_list, channel, variable_list):
 
         # write header
@@ -94,22 +90,40 @@ class Combination(object):
         content += "NVARS	 2\n"
 
         # variable
-        content += "ATTRIBF	%%%s\n" %self.file_ext
-        content += 'VARIAB	"%s"\n' %(variable_list[0] if channel=='br' else variable_list[0])
-        content += 'DESCRIPTION	"%s"\n' %(variable_list[0] if channel=='br' else variable_list[0]+', Distance along blade= 0m')
-        content += 'DISPNAME	""\n'
-        content += 'NDIMENS	%s\n' %('2' if channel=='br' else '3')
-        content += 'DIMFLAG	-1\n'
-        content += '%s' %('' if channel=='br' else 'DIM2	 0\n')
-        content += 'UNITS	"Nm"\n'
-        content += "ATTRIBF	%%%s\n" %self.file_ext
-        content += 'VARIAB	"%s"\n' %(variable_list[1] if channel=='br' else variable_list[1])
-        content += 'DESCRIPTION	"%s"\n' %(variable_list[1] if channel=='br' else variable_list[1]+', Distance along blade= 0m')
-        content += 'DISPNAME	""\n'
-        content += 'NDIMENS	%s\n' %('2' if channel=='br' else '3')
-        content += 'DIMFLAG	-1\n'
-        content += '%s' %('' if channel=='br' else 'DIM2	 0\n')
-        content += 'UNITS	"Nm"\n'
+        if len(variable_list[0])==1:
+            content += "ATTRIBF	%%%s\n" %self.file_ext
+            content += 'VARIAB	"%s"\n' %variable_list[0]
+            content += 'DESCRIPTION	"%s"\n' %variable_list[0]
+            content += 'DISPNAME	""\n'
+            content += 'NDIMENS	2\n'
+            content += 'DIMFLAG	-1\n'
+            content += 'UNITS	"Nm"\n'
+        else:
+            content += "ATTRIBF	%%%s\n" %self.file_ext
+            content += 'VARIAB	"%s"\n' %variable_list[0][0]
+            content += 'DESCRIPTION	"%s, Distance along blade= %sm"\n' %tuple(variable_list[0][:2])
+            content += 'DISPNAME	""\n'
+            content += 'NDIMENS	3\n'
+            content += 'DIMFLAG	-1\n'
+            content += 'DIM2	 %s\n' %variable_list[0][2]
+            content += 'UNITS	"Nm"\n'
+        if len(variable_list[1])==1:
+            content += "ATTRIBF	%%%s\n" %self.file_ext
+            content += 'VARIAB	"%s"\n' %variable_list[1]
+            content += 'DESCRIPTION	"%s"\n' %variable_list[1]
+            content += 'DISPNAME	""\n'
+            content += 'NDIMENS	2\n'
+            content += 'DIMFLAG	-1\n'
+            content += 'UNITS	"Nm"\n'
+        else:
+            content += "ATTRIBF	%%%s\n" %self.file_ext
+            content += 'VARIAB	"%s"\n' %variable_list[1][0]
+            content += 'DESCRIPTION	"%s, Distance along blade= %sm"\n' %tuple(variable_list[1][:2])
+            content += 'DISPNAME	""\n'
+            content += 'NDIMENS	3\n'
+            content += 'DIMFLAG	-1\n'
+            content += 'DIM2	 %s\n' %variable_list[1][2]
+            content += 'UNITS	"Nm"\n'
         content += 'MEND\n'
         content += '\n'
 
@@ -176,14 +190,24 @@ class Combination(object):
         # variable
         content += "MSTART MULTIVAR\n"
         content += 'NVARS	2\n'
-        content += "ATTRIBF	%%%s\n" %self.file_ext
-        content += "VARIAB	'%s'\n" %(variable_list[0] if channel=='br' else variable_list[0])
-        content += '%s' %('' if channel=='br' else 'DIM2	 0\n')
-        content += "FULL_NAME	'%s'\n" %(variable_list[0] if channel=='br' else variable_list[0]+', Distance along blade= 0m')
-        content += "ATTRIBF	%%%s\n" %self.file_ext
-        content += "VARIAB	'%s'\n" %(variable_list[1] if channel=='br' else variable_list[1])
-        content += '%s' %('' if channel=='br' else 'DIM2	 0\n')
-        content += "FULL_NAME	'%s'\n" %(variable_list[1] if channel=='br' else variable_list[1]+', Distance along blade= 0m')
+        if len(variable_list[0])==1:
+            content += "ATTRIBF	%%%s\n" %self.file_ext
+            content += "VARIAB	'%s'\n" %variable_list[0]
+            content += "FULL_NAME	'%s'\n" %variable_list[0]
+        else:
+            content += "ATTRIBF	%%%s\n" %self.file_ext
+            content += "VARIAB	'%s'\n" %variable_list[0][0]
+            content += 'DIM2	 %s\n' %variable_list[0][2]
+            content += "FULL_NAME	'%s, Distance along blade= %sm'\n" %tuple(variable_list[0][:2])
+        if len(variable_list[1])==1:
+            content += "ATTRIBF	%%%s\n" %self.file_ext
+            content += "VARIAB	'%s'\n" %variable_list[1]
+            content += "FULL_NAME	'%s'\n" %variable_list[1]
+        else:
+            content += "ATTRIBF	%%%s\n" %self.file_ext
+            content += "VARIAB	'%s'\n" %variable_list[1][0]
+            content += 'DIM2	 %s\n' %variable_list[1][2]
+            content += "FULL_NAME	'%s, Distance along blade= %sm'\n" %tuple(variable_list[1][:2])
         content += 'MEND\n'
 
         return content
@@ -191,21 +215,19 @@ class Combination(object):
     def write_content(self):
 
         for key, values in self.chan_dict.items():
-
             chan_path = os.path.join(self.res_path, key)
-
             lc_len = len(self.lc_list)
-
             jb_num = int(np.ceil(lc_len/100))
 
             for i in range(jb_num):
-
                 temp = self.lc_list[i*100:(i+1)*100]
 
                 file_name = 'combine'+str(i+1)
                 file_path = os.path.join(chan_path, file_name)
+
                 if not os.path.exists(file_path):
                     os.makedirs(file_path)
+
                 prj_path  = os.path.join(file_path, '%s.$PJ' %('combine'+'_'+str(i+1)))
                 in_path   = os.path.join(file_path, 'dtsignal.in')
 
@@ -219,18 +241,9 @@ class Combination(object):
 
 if __name__ == '__main__':
 
-
-    prj_name = ['combine_v3']
-
-    run_path = [r'\\172.20.0.4\fs02\CE\V3\loop05\run_0615']
-
-    res_path = [r'\\172.20.0.4\fs02\CE\V3\loop05\post_test\04_Combination']
-
+    run_path = r'\\172.20.4.132\fs02\CE\WE3600NB-167\run_0119'
+    res_path = r'\\172.20.4.132\fs02\CE\WE3600NB-167\post\0119\04_Combination'
     fat_list = ['DLC12', 'DLC24a', 'DLC24b', 'DLC24c', 'DLC24d', 'DLC31', 'DLC41', 'DLC64']
+    chan_dict = {'brs1': [('Blade 1 Mx (Root axes)', '0', '0'), ('Blade 1 My (Root axes)', '0', '0')]}
 
-    chan_dict = {'br' : ['Blade root 1 Mx', 'Blade root 1 My'],
-                 'brs': ['Blade 1 Mx (Root axes)', 'Blade 1 My (Root axes)']}
-
-    for index, path in enumerate(res_path):
-
-        Combination(run_path[index], res_path[index], fat_list, chan_dict)
+    Combination(run_path, res_path, fat_list, chan_dict, '41', '800', list(range(0, 360, 15)))

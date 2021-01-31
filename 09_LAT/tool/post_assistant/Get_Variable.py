@@ -40,6 +40,7 @@ class Get_Variables(object):
         self.bas_var_list  = []
         self.bus_var_list  = []
         self.hr_all_list   = []
+        self.brs_mxy_list  = {}
         
         # fatigue variable
         self.br1_fat_list  = []
@@ -60,9 +61,27 @@ class Get_Variables(object):
         self.bas3_fat_list = []
         self.bus1_fat_list = []
         self.bus2_fat_list = []
-        self.bus3_fat_list = [] 
+        self.bus3_fat_list = []
 
+        self.var_ext = {}
+        self.get_var_extension()
         self.get_variable()
+
+    def get_var_extension(self):
+
+        pj_path, pj_file = os.path.split(self.prj_path)
+        file_list = [file for file in os.listdir(pj_path) if file.split("%")[-1].isdigit()]
+
+        for file in file_list:
+            file_path = os.path.join(pj_path, file)
+            with open(file_path) as f:
+                lines = f.readlines()
+                var_line = [line for line in lines if line.startswith('VARIAB')][0]
+                # print(var_line.strip().split('\t')[1])
+                var_list = var_line.strip().split("'")[1::2]
+
+                for var in var_list:
+                    self.var_ext[var] = file.split('%')[-1]
 
     def get_variable(self):
 
@@ -129,9 +148,7 @@ class Get_Variables(object):
                     self.twr_output = line.strip().split()[1:]
                     # print('tower output:', self.twr_output)
 
-        # pj_name = pj_file.split('.$')[0]
         pj_name = os.path.splitext(pj_file)[0]
-        # print(pj_name)
 
         # blade root
         br_file = os.path.join(pj_path, '.%'.join([pj_name,'22']))
@@ -168,6 +185,20 @@ class Get_Variables(object):
                 var_list = var_line.strip().split("'")[1::2]
                 self.br_mxy_list = var_list
                 # print('br_mxy:', var_list)
+
+        # blade root axes mxy for each section
+        brs_mxy_list = [file for file in os.listdir(pj_path) if '.%9' in file]
+        self.brs_mxy_flag = True if brs_mxy_list else False
+        if self.brs_mxy_flag:
+            for file in brs_mxy_list:
+                file_path = os.path.join(pj_path, file)
+                with open(file_path) as f:
+                    lines = f.readlines()
+                    var_line = [line for line in lines if line.startswith('VARIAB')][0]
+                    # print(var_line.strip().split('\t')[1])
+                    var_list = var_line.strip().split("'")[1::2]
+                    sec_name = '_'.join(var_list[0].split('_')[:2])
+                    self.brs_mxy_list[sec_name] = var_list
 
         # blade root axes mxy angle
         brs1_file = os.path.join(pj_path, '.%'.join([pj_name, '800']))
@@ -481,7 +512,16 @@ class Get_Variables(object):
                 self.tc_var_list = var_line.strip().split('\t')[1][1:-1].split("' '")[-3:]
             # print(self.tc_var_list)
 
+        dt_file = os.path.join(pj_path, '.%'.join([pj_name,'05']))
+        self.dt_flag = True if os.path.isfile(dt_file) else False
+        if self.dt_flag:
+            with open(dt_file) as f:
+                lines = f.readlines()
+                var_line = [line for line in lines if line.startswith('VARIAB')][0]
+
+                self.dt_var_list = var_line.strip().split("'")[1::2]
+
 if __name__ == '__main__':
 
     pj_path  = r"\\172.20.0.4\fs02\CE\W2500-135-90\run_50%\DLC12\12_aa-01\12_aa-01.$PJ"
-    Get_Variables(pj_path)
+    # Get_Variables(pj_path)

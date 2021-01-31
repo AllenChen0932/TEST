@@ -6,7 +6,7 @@
 
 import os
 from openpyxl import load_workbook
-import pysnooper
+# import pysnooper
 # from openpyxl.utils import get_column_letter, column_index_from_string
 
 class Fatigue(object):
@@ -19,7 +19,8 @@ class Fatigue(object):
                  num_bins,
                  des_life,
                  eq_cycle,
-                 fat_chan):
+                 fat_chan,
+                 var_ext=False):
 
         self.run_path = run_path.replace('/', '\\')
         self.fat_path = fat_path.replace('/', '\\')
@@ -29,37 +30,25 @@ class Fatigue(object):
         self.cha_dict = fat_chan    #{channel: variable list}, e.g. yb:[Yaw bearing Fx, Yaw bearing Fy]
         self.des_life = des_life
         self.eq_cycle = eq_cycle
+        self.var_ext = var_ext
 
         if not os.path.exists(self.fat_path):
             os.makedirs(self.fat_path)
-            # print(self.fat_path)
 
         self.dlc_num = 0
         self.lc_list = []    # load case list
         self.lc_path = {}    # lc name: load case path
         self.lc_lct  = {}    # load case: [hour, type]
 
-        # self.error_fat   = False
-
         self.PAI = 3.14153186157
-
-        # self.get_dlc()
-        # self.get_subgroup()
 
         self.get_loadcase()
         self.read_lct()
         self.write_pj()
         self.write_in()
-        # self.finish_fat = True
-
-        # except IOError:
-        #     self.error_flag = True
 
     def get_loadcase(self):
-        '''
-        get subgroup sorted by mean and half
-        :return:
-        '''
+        '''get load case for each fatigue load case'''
         self.dlc_list.sort()
 
         for dlc in self.dlc_list:
@@ -75,13 +64,10 @@ class Fatigue(object):
                     self.lc_list.append(lc)
 
     def write_pj(self):
-
+        '''write pj file'''
         for key, value in self.cha_dict.items():
-            # variable
+            # write bpa, bra, baa, bua
             if len(value) == 2 and len(value[0]) == 3:
-                # write bpa, bra, baa, bua
-                # bpa1, bpa2, bpa3
-                # print(key, value)
                 for i in range(1, 4):
                     # variable
                     for sec in value[-1]:
@@ -166,10 +152,8 @@ class Fatigue(object):
                         with open(os.sep.join([pj_path, pj_file]), 'w+') as f:
                             f.write(content)
                         print('%s pj is done!' %pj_name)
-
+            # write tr
             elif len(value) == 2 and len(value[0]) != 3:
-                # write tr
-                # print(value)
                 for sec in value[-1]:
                     # header
                     content = '<?xml version="1.0" encoding="ISO-8859-1" ?>\n' \
@@ -249,12 +233,9 @@ class Fatigue(object):
                     with open(os.sep.join([pj_path, pj_file]), 'w+') as f:
                         f.write(content)
                     print('%s pj is done!' %pj_name)
-
+            # write br, br1, br2, br3
             elif len(value) == 1 and len(value[0]) == 3:
-                # write br
-                # br1, br2, br3
                 for i in range(1, 4):
-
                     # header
                     content = '<?xml version="1.0" encoding="ISO-8859-1" ?>\n' \
                               '<BladedProject ApplicationVersion="4.8.0.41">\n' \
@@ -333,9 +314,8 @@ class Fatigue(object):
                     with open(os.sep.join([pj_path, pj_file]), 'w+') as f:
                         f.write(content)
                     print('%s pj is done!' %pj_name)
-
+            # write hs, hr, yb
             elif len(value) == 1 and len(value[0]) != 3:
-                # write hs, hr, yb
                 # header
                 content = '<?xml version="1.0" encoding="ISO-8859-1" ?>\n' \
                           '<BladedProject ApplicationVersion="4.8.0.41">\n' \
@@ -416,7 +396,7 @@ class Fatigue(object):
                 print('%s pj is done!' %key)
 
     def write_in(self):
-
+        '''write in file'''
         for key, value in self.cha_dict.items():
             # print(key, value)
 
@@ -674,7 +654,7 @@ class Fatigue(object):
                 print('%s in is done!' %key)
 
     def write_in_variable(self, channel, var_list, height=None):
-
+        '''write in variables'''
         content = ''
 
         if channel == 'br':
@@ -719,6 +699,19 @@ class Fatigue(object):
                 content += "VARIAB	'%s'\n"  %var
                 content += "FULL_NAME	'%s'\n" %var
 
+        elif channel == 'dt':
+            content += 'MSTART MULTIVAR\n'
+            content += 'NVARS	%s\n' %len(var_list)
+            for var in var_list:
+
+                content += 'MIN	 0\n'
+                content += 'MAX	 0\n'
+                content += 'NBINS	%s\n' %self.num_bins
+                content += 'MIN_RANGE	 0\n'
+                content += 'ATTRIBF	%05\n'
+                content += "VARIAB	'%s'\n"  %var
+                content += "FULL_NAME	'%s'\n" %var
+
         elif channel == 'yb':
 
             content += 'MSTART MULTIVAR\n'
@@ -746,7 +739,7 @@ class Fatigue(object):
                 content += 'ATTRIBF	%25\n'
                 content += "VARIAB	'%s'\n" %var
                 content += "AXITICK2	'%s'\n" %height
-                content += "FULL_NAME	'%s, Location=%s'\n" %(var, height+'.')
+                content += "FULL_NAME	'%s, Location=%s.'\n" %(var, height)
 
         elif channel == 'tr' and 'Mbr' not in height:
 
@@ -776,7 +769,7 @@ class Fatigue(object):
                 content += 'DIM2	 %s\n' %height
                 content += "FULL_NAME	'%s, Distance along blade= %sm'\n" %(var, height)
 
-        elif channel.startswith('brs') and ('comb'not in channel):
+        elif channel.startswith('brs') and ('comb'not in channel) and not self.var_ext:
             # print(channel)
             content += 'MSTART MULTIVAR\n'
             content += 'NVARS	6\n'
@@ -845,12 +838,24 @@ class Fatigue(object):
                 content += "VARIAB	'%s'\n" % var
                 content += "FULL_NAME	'%s'\n" % var
 
+        elif channel.startswith('brs') and self.var_ext:
+            content += 'MSTART MULTIVAR\n'
+            content += 'NVARS	%s\n' %len(var_list)
+            for var_ext in var_list:
+                content += 'MIN	 0\n'
+                content += 'MAX	 0\n'
+                content += 'NBINS	%s\n' % self.num_bins
+                content += 'MIN_RANGE	 0\n'
+                content += 'ATTRIBF	%%%s\n' % var_ext[1]
+                content += "VARIAB	'%s'\n" % var_ext[0]
+                content += "FULL_NAME	'%s'\n" % var_ext[0]
+
         content += 'MEND\n\n'
         # print(channel)
         return content
 
     def write_pj_variable(self, channel, var_list, height=None):
-        # print(channel, var_list)
+        '''write pj variables'''
         content = ''
 
         if channel == 'br':
@@ -898,6 +903,21 @@ class Fatigue(object):
                 content += 'NDIMENS	2\n'
                 content += 'DIMFLAG	-1\n'
 
+        elif channel == 'dt':
+
+            content += 'MSTART MULTIVAR\n'
+            content += 'NVARS	%s\n' %len(var_list)
+            for var in var_list:
+                content += 'MIN	 0\n'
+                content += 'MAX	 0\n'
+                content += 'NBINS	%s\n' %self.num_bins
+                content += 'MIN_RANGE	 0\n'
+                content += 'ATTRIBF	%05\n'
+                content +=  'VARIAB	"%s"\n'  %var
+                content += 'DESCRIPTION	"%s"\n' %var
+                content += 'NDIMENS	2\n'
+                content += 'DIMFLAG	-1\n'
+
         elif channel == 'yb':
 
             content += 'MSTART MULTIVAR\n'
@@ -924,7 +944,7 @@ class Fatigue(object):
                 content += 'MIN_RANGE	 0\n'
                 content += 'ATTRIBF	%25\n'
                 content +=  'VARIAB	"%s"\n'  %var
-                content += 'DESCRIPTION	"%s, Location=%s"\n' %(var, height+'.')
+                content += 'DESCRIPTION	"%s, Location=%s."\n' %(var, height)
                 content += 'NDIMENS	3\n'
                 content += 'DIMFLAG 0\n'
                 content += "AXITICK2	'%s'\n" %height
@@ -961,7 +981,7 @@ class Fatigue(object):
                 content += 'DIMFLAG	-1\n'
                 content += 'DIM2	 %s\n' %height
 
-        elif channel.startswith('brs') and ('comb' not in channel):
+        elif channel.startswith('brs') and ('comb' not in channel) and not self.var_ext:
 
             content += 'MSTART MULTIVAR\n'
             content += 'NVARS	6\n'
@@ -1041,11 +1061,24 @@ class Fatigue(object):
                 content += 'NDIMENS	2\n'
                 content += 'DIMFLAG	-1\n'
 
+        elif channel.startswith('brs') and self.var_ext:
+            content += 'MSTART MULTIVAR\n'
+            content += 'NVARS	%s\n' %len(var_list)
+            for var_ext in var_list:
+                content += 'MIN	 0\n'
+                content += 'MAX	 0\n'
+                content += 'NBINS	%s\n' %self.num_bins
+                content += 'MIN_RANGE	 0\n'
+                content += 'ATTRIBF	%%%s\n' %var_ext[1]
+                content += 'VARIAB	"%s"\n' %var_ext[0]
+                content += 'DESCRIPTION	"%s"\n' %var_ext[0]
+                content += 'NDIMENS	2\n'
+                content += 'DIMFLAG	-1\n'
+
         content += 'MEND\n\n'
         # print(content)
         return content
 
-    # @pysnooper.snoop()
     def read_lct(self):
         # print(self.lct_path)
         table = load_workbook(self.lct_path, keep_vba=True, data_only=True)

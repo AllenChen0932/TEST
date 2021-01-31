@@ -4,6 +4,7 @@
 # @File    : TC.py
 
 import os
+# import pysnooper
 
 class Ultimate(object):
 
@@ -16,7 +17,8 @@ class Ultimate(object):
                  etm_option,
                  mean_index='#',
                  half_index='+',
-                 include_sf=True):
+                 include_sf=True,
+                 var_extension=False):
 
         self.run_path  = run_path.replace('/', '\\')
         self.ult_path  = ult_path.replace('/', '\\')
@@ -32,6 +34,7 @@ class Ultimate(object):
         self.mean_index = mean_index
         self.half_index = half_index
         self.include_sf = include_sf
+        self.var_ext    = var_extension
         # print(self.include_sf)
 
         self.dlc_number   = 0
@@ -111,14 +114,9 @@ class Ultimate(object):
             self.finish_ult = True
         except:
             self.finish_ult = False
-            # pass
-            # self.error_flag = True
 
     def read_sf(self):
-        '''
-        read safety factor
-        :return:
-        '''
+        '''read safety factor'''
 
         sf_file = 'dlc_sf.txt'
         file_path = os.path.join(os.getcwd(), sf_file)
@@ -138,10 +136,7 @@ class Ultimate(object):
                         continue
 
     def get_subgroup(self):
-        '''
-        get subgroup sorted by mean and half
-        :return:
-        '''
+        '''get subgroup sorted by mean and half'''
 
         group_index = 0
         self.dlc_list.sort()
@@ -184,9 +179,7 @@ class Ultimate(object):
                         group_name = str(lc.split(self.half_index)[0])+self.half_index
 
                         self.lc_group_name[lc] = group_name
-                        # if group_name not in self.allgroup_list:
-                        #     self.allgroup_list.append(group_name)
-                        #
+
                         if group_name not in self.allgroup_index.keys():
                             group_index +=1
                             self.allgroup_index[group_name] = group_index
@@ -210,18 +203,12 @@ class Ultimate(object):
         self.allgroup_list = list(self.allgroup_dlc.keys())
         self.allgroup_list.sort()
 
-        # print(self.allgroup_dlc)
-        # print(self.allgroup_index)
-
     def write_pj(self):
-
+        '''write pj file'''
         for key, value in self.cha_dict.items():
-            # print(key, value)
+            # write bpa, bra, baa, bua and tower
             if len(value) == 2:
-                # write bpa, bra, baa, bua and tower
-                # print(key, value)
                 for sec in value[1]:
-                    # print(sec)
                     # header
                     content = '<?xml version="1.0" encoding="ISO-8859-1" ?>\n' \
                               '<BladedProject ApplicationVersion="4.8.0.41">\n' \
@@ -298,11 +285,9 @@ class Ultimate(object):
 
                     with open(os.sep.join([pj_path, pj_file]), 'w+') as f:
                         f.write(content)
-                    print('%s pj is done!' %key)
-
+                    print('%s is done!' %pj_file)
+            # yb, hs, hr
             else:
-                # yb, hs, hr
-                # print(key, value)
                 # header
                 content = '<?xml version="1.0" encoding="ISO-8859-1" ?>\n' \
                           '<BladedProject ApplicationVersion="4.8.0.41">\n' \
@@ -376,14 +361,12 @@ class Ultimate(object):
 
                 with open(os.sep.join([pj_path,pj_file]), 'w+') as f:
                     f.write(content)
-                print('%s pj is done!' %key)
+                print('%s is done!'%pj_file)
 
     def write_in(self):
-
+        '''write in file'''
         for key, value in self.cha_dict.items():
-            # print(key, value)
             if len(value) == 2:
-
                 for sec in value[1]:
 
                     pj_name = sec if 'Mbr' in sec else ((key + '_' + str('%.3f' %float(sec))) if key != 'ep' else key)
@@ -424,14 +407,11 @@ class Ultimate(object):
 
                     for j in range(var_num):
                         i = 0
-
                         for ind, lc in enumerate(self.all_loadcase):
-
                             if i == 500:
                                 content += '\n'
                                 content += '%s,' %(self.dlc_sf[self.allcase_dlc[lc][:5]] if self.include_sf else '1.0')
                                 i = 1
-
                             else:
                                 content += '%s,' %(self.dlc_sf[self.allcase_dlc[lc][:5]] if self.include_sf else '1.0')
                                 i += 1
@@ -458,7 +438,6 @@ class Ultimate(object):
                     print('%s in is done!' %key)
 
             else:
-
                 pj_path = os.path.join(self.ult_path, key).replace(' ', '_')
 
                 content  = 'PTYPE	14\n' \
@@ -494,14 +473,11 @@ class Ultimate(object):
 
                 for j in range(var_num):
                     i = 0
-
                     for ind, lc in enumerate(self.all_loadcase):
-
                         if i == 500:
                             content += '\n'
                             content += '%s,' %(self.dlc_sf[self.allcase_dlc[lc][:5]] if self.include_sf else '1.0')
                             i = 1
-
                         else:
                             content += '%s,' %(self.dlc_sf[self.allcase_dlc[lc][:5]] if self.include_sf else '1.0')
                             i += 1
@@ -754,6 +730,21 @@ class Ultimate(object):
                 content += 'SFDEFAULT	-1\n'
                 content += 'SFVALUE	 0\n'
             content += 'EXTRAVARS\t0\n'
+
+        if channel.startswith('brs') and self.var_ext:
+            content += 'NVARS	%s\n' %len(var_list)
+            content += 'BLADEFLAG	0\n'
+
+            for var_ext in var_list:
+                content += 'ATTRIBF	%%%s\n' %var_ext[1]
+                content += 'VARIAB	"%s"\n' %var_ext[0]
+                content += 'DESCRIPTION	"%s"\n' %var_ext[0]
+                content += 'NDIMENS	2\n'
+                content += 'DIMFLAG	-1\n'
+                content += 'SFDEFAULT	-1\n'
+                content += 'SFVALUE	 0\n'
+            content += 'EXTRAVARS\t0\n'
+
         return content
 
     def write_in_variable(self, channel, var_list, height=None):
@@ -836,7 +827,6 @@ class Ultimate(object):
             content += 'NVARS	%s\n' %len(var_list)
 
             for var in var_list:
-
                 content += 'ATTRIBF	%25\n'
                 content += "VARIAB	'%s'\n" %var
                 content += 'DIM2	 %s\n' %height
@@ -950,7 +940,6 @@ class Ultimate(object):
             return content, content1
 
         elif channel == 'ep':
-
             content += 'NVARS	%s\n' %len(var_list)
             content += '%s' %('COMBINE	3\n' if len(var_list)==9 else '')
             content += '%s' %('COMBINEMETHOD	0\n' if len(var_list)==9 else '')
@@ -998,7 +987,16 @@ class Ultimate(object):
             content += 'EXTRAVARS\t0\n'
             return content
 
-        return content
+        elif channel.startswith('brs') and self.var_ext:
+            content += 'NVARS	%s\n' %len(var_list)
+
+            for var_ext in var_list:
+                content += 'ATTRIBF	%%%s\n' %var_ext[1]
+                content += "VARIAB	'%s'\n" %var_ext[0]
+                content += "FULL_NAME	'%s'\n" %var_ext[0]
+
+            content += 'EXTRAVARS\t0\n'
+            return content
 
 if __name__ == '__main__':
 
