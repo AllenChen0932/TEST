@@ -65,7 +65,7 @@ class LoadSumWindow(QMainWindow):
         super(LoadSumWindow, self).__init__(parent)
         self.mywidget = QWidget(self)
 
-        self.setMinimumSize(700, 550)
+        self.setMinimumSize(700, 600)
         # self.resize(800, 500)
         self.setWindowTitle('Load Summary Table')
         self.setWindowIcon(QIcon("./Icon/sheet.ico"))
@@ -618,7 +618,7 @@ class LoadSumWindow(QMainWindow):
 
     def check_input(self):
         '''check .$TE to find out if the simulation is finished, or give warning'''
-
+        print('Begin to check excel template...')
         if '\\' in self.lin1.text():
             self.xls_temp = self.lin1.text().replace('\\', '/')
         else:
@@ -728,13 +728,13 @@ class LoadSumWindow(QMainWindow):
                                 else:
                                     self.mbl_list.append(None)
 
-                # print('LDD :', self.ldd_list)
-                # print('LRD :', self.lrd_list)
-                # print('NAC :', self.nac_list)
-                # print('PBL :', self.pbl_list)
-                # print('GET :', self.get_list)
-                # print('MBL :', self.mbl_list)
-                # print()
+                print('LDD :', self.ldd_list)
+                print('LRD :', self.lrd_list)
+                print('NAC :', self.nac_list)
+                print('PBL :', self.pbl_list)
+                print('GET :', self.get_list)
+                print('MBL :', self.mbl_list)
+                print()
 
                 def check():
 
@@ -757,7 +757,7 @@ class LoadSumWindow(QMainWindow):
                         input_isok = False
                         return error_flag, input_isok
 
-                    if not self.loopname:
+                    if not all(self.loopname):
                         error_flag = 3
                         input_isok = False
                         return error_flag, input_isok
@@ -773,8 +773,8 @@ class LoadSumWindow(QMainWindow):
                         input_isok = False
                         return error_flag, input_isok
 
-                    if (self.cb_dynpowc.isChecked() or self.cb_aepdlc12.isChecked()) and \
-                           (len(self.lct_list) != len(self.loopname) or len(self.dlc_list) != len(self.loopname)):
+                    if ((self.cb_dynpowc.isChecked() or self.cb_aepdlc12.isChecked())
+                        and (len(self.lct_list) != len(self.loopname) or len(self.dlc_list) != len(self.loopname))):
                         error_flag = 6
                         input_isok = False
                         return error_flag, input_isok
@@ -819,21 +819,11 @@ class LoadSumWindow(QMainWindow):
                         input_isok = False
                         return error_flag, input_isok
 
-                    if not(self.cb_ultimate.isChecked()
-                           or self.cb_gearequ.isChecked()
-                           or self.cb_fatigue.isChecked()
-                           or self.cb_fatdlc.isChecked()
-                           or self.cb_fatwind.isChecked()
-                           or self.cb_heatmap.isChecked()
-                           or self.cb_plotldd.isChecked()
-                           or self.cb_plotlrd.isChecked()
-                           or self.cb_pitbear.isChecked()
-                           or self.cb_mainber.isChecked()
-                           or self.cb_dynpowc.isChecked()
-                           or self.cb_aepdlc12.isChecked()
-                           or self.cb_alarmid.isChecked()
-                           # or self.cb_towercl.isChecked()
-                           or self.cb_nacacce.isChecked()):
+                    if not(self.cb_ultimate.isChecked() or self.cb_gearequ.isChecked() or self.cb_fatigue.isChecked()
+                           or self.cb_fatdlc.isChecked() or self.cb_fatwind.isChecked() or self.cb_heatmap.isChecked()
+                           or self.cb_plotldd.isChecked() or self.cb_plotlrd.isChecked() or self.cb_pitbear.isChecked()
+                           or self.cb_mainber.isChecked() or self.cb_dynpowc.isChecked() or self.cb_aepdlc12.isChecked()
+                           or self.cb_alarmid.isChecked() or self.cb_nacacce.isChecked()):
 
                         error_flag = 14
                         input_isok = False
@@ -1026,14 +1016,7 @@ class LoadSumWindow(QMainWindow):
 
         if self.radio_new.isChecked():
 
-            self.out_path = self.lin2.text()
-
-            if '\\' in self.out_path:
-                self.out_path = self.out_path.replace('\\', '/')
-
-            print('Output path: ', self.out_path)
-            print()
-
+            self.out_path = self.lin2.text().replace('\\', '/')
             self.xls_name = self.lin3.text()
 
             logging.basicConfig(
@@ -1072,7 +1055,6 @@ class LoadSumWindow(QMainWindow):
             self.xls_path = self.lin4.text()
 
             if '\\' in self.lin4.text():
-
                 self.xls_path = self.lin4.text().replace('\\', '/')
 
             append(self.xls_temp,
