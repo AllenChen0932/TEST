@@ -30,6 +30,7 @@ from tool.check_simulation.check_dlc2x_ed3 import Check_DLC2x as Check_DLC2x_ed3
 from tool.check_simulation.check_joblist import Check_Joblist
 from tool.check_simulation.check_dlc1x import Check_DLC1x
 from tool.check_simulation.check_alarm import Check_Alarm
+from tool.check_simulation.chekc_size import Check_Size
 
 class MyQLineEdit(QLineEdit):
     def __init__(self):
@@ -75,7 +76,7 @@ class CheckWindow(QMainWindow):
 
         # 设置窗口大小
         # self.setGeometry(5,30,300,self.minimumHeight())
-        self.setFixedSize(600,300)
+        self.setFixedSize(600,320)
         # self.resize(200,90)
         # self.resize(self.maximumWidth(),self.minimumHeight())
         # 设置标题、图标和是否
@@ -169,8 +170,9 @@ class CheckWindow(QMainWindow):
         self.cbx_alarm = QCheckBox('Alarm')
         self.cbx_alarm.setFont(self.cont_font)
         self.cbx_alarm.clicked.connect(self.check_alarm)
-        self.cbx_gain  = QCheckBox('Optimal Gain')
-        self.cbx_gain.setFont(self.cont_font)
+        self.cbx_size  = QCheckBox('DLC Size')
+        self.cbx_size.setFont(self.cont_font)
+        self.cbx_size.clicked.connect(self.check_size)
 
         self.cbx1 = QComboBox()
         self.cbx1.setFont(self.cont_font)
@@ -193,15 +195,16 @@ class CheckWindow(QMainWindow):
         self.group1.setLayout(self.grid1)
         #
         self.grid2 = QGridLayout()
-        self.grid2.addWidget(self.cbx_dlc1x,   2, 0, 1, 1)
-        self.grid2.addWidget(self.lin5,        2, 1, 1, 5)
-        self.grid2.addWidget(self.cbx_dlc2x,   3, 0, 1, 1)
-        self.grid2.addWidget(self.cbx1       , 3, 1, 1, 5)
-        self.grid2.addWidget(self.cbx_alarm,   1, 0, 1, 1)
-        self.grid2.addWidget(self.lin4,        1, 1, 1, 5)
-        self.grid2.addWidget(self.cbx_job,     0, 0, 1, 1)
-        self.grid2.addWidget(self.lin2,        0, 1, 1, 5)
+        self.grid2.addWidget(self.cbx_job, 0, 0, 1, 1)
+        self.grid2.addWidget(self.lin2, 0, 1, 1, 5)
         self.grid2.addWidget(self.btn_joblist, 0, 6, 1, 1)
+        self.grid2.addWidget(self.cbx_alarm, 1, 0, 1, 1)
+        self.grid2.addWidget(self.lin4, 1, 1, 1, 5)
+        self.grid2.addWidget(self.cbx_dlc1x, 2, 0, 1, 1)
+        self.grid2.addWidget(self.lin5, 2, 1, 1, 5)
+        self.grid2.addWidget(self.cbx_dlc2x, 3, 0, 1, 1)
+        self.grid2.addWidget(self.cbx1, 3, 1, 1, 5)
+        self.grid2.addWidget(self.cbx_size, 4, 0, 1, 1)
 
         self.group2 = QGroupBox('Check Option')
         self.group2.setFont(self.title_font)
@@ -300,6 +303,14 @@ class CheckWindow(QMainWindow):
         else:
             self.cbx1.setDisabled(True)
 
+    def check_size(self):
+        if self.cbx_size.isChecked():
+            self.lin1.setDisabled(False)
+            self.btn_run.setDisabled(False)
+        else:
+            self.lin1.setDisabled(True)
+            self.btn_run.setDisabled(True)
+
     def run_check(self):
 
         result_path = self.lin3.text()
@@ -318,14 +329,16 @@ class CheckWindow(QMainWindow):
         elif self.cbx_job.isChecked() and not joblist.endswith('joblist'):
             QMessageBox.about(self, 'Warnning', 'Please choose a right joblist first!')
 
-        elif (self.cbx_alarm.isChecked() or self.cbx_dlc1x.isChecked() or self.cbx_dlc2x.isChecked()) and not run_path:
+        elif (self.cbx_alarm.isChecked() or self.cbx_dlc1x.isChecked() or self.cbx_dlc2x.isChecked() or
+                  self.cbx_size.isChecked()) and not run_path:
             QMessageBox.about(self, 'Warnning', 'Please choose a run path first!')
 
-        elif (self.cbx_alarm.isChecked() or self.cbx_dlc1x.isChecked() or self.cbx_dlc2x.isChecked()) and \
-                not (type(eval(init_time))==int or type(eval(init_time)==float)):
+        elif (not (type(eval(init_time))==int or type(eval(init_time)==float)) and
+                  any((self.cbx_alarm.isChecked() or self.cbx_dlc1x.isChecked() or self.cbx_dlc2x.isChecked()))):
             QMessageBox.about(self, 'Warnning', 'Please define a valid initialization time first!')
 
-        elif  not any((self.cbx_job.isChecked(),self.cbx_dlc1x.isChecked(),self.cbx_dlc2x.isChecked(),self.cbx_alarm.isChecked())):
+        elif  not any((self.cbx_job.isChecked(), self.cbx_dlc1x.isChecked(), self.cbx_dlc2x.isChecked(),
+                       self.cbx_alarm.isChecked(), self.cbx_size.isChecked())):
             QMessageBox.about(self, 'Warnning', 'Please choose an option to check!')
 
         elif self.cbx_alarm.isChecked() and not alarm_cont:
@@ -352,17 +365,20 @@ class CheckWindow(QMainWindow):
                 if self.cbx_dlc2x.isChecked() and (self.cbx1.currentIndex()==1):
                     Check_DLC2x_ed3(float(init_time), run_path, result_path)
 
-                cbx_list = [self.cbx_job, self.cbx_alarm, self.cbx_dlc1x, self.cbx_dlc2x]
+                if self.cbx_size.isChecked():
+                    Check_Size(run_path, result_path)
+                cbx_list = [self.cbx_job, self.cbx_alarm, self.cbx_dlc1x, self.cbx_dlc2x, self.cbx_size]
 
                 func_txt = {self.cbx_job: 'check_joblist.txt',
                             self.cbx_alarm: 'check_alarm.txt',
                             self.cbx_dlc1x: 'check_dlc1x.txt',
-                            self.cbx_dlc2x: 'check_dlc2x.txt'}
+                            self.cbx_dlc2x: 'check_dlc2x.txt',
+                            self.cbx_size: 'check_size.txt'}
 
-                check_flag   = True
-                file_list    = os.listdir(result_path)
-                check_isok   = ''
-                check_error  = ''
+                check_flag = True
+                file_list = os.listdir(result_path)
+                check_isok = ''
+                check_error = ''
 
                 for cbx in cbx_list:
                     if cbx.isChecked():
