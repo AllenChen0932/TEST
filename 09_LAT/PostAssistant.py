@@ -6,6 +6,7 @@
 import sys, os, time
 import shutil
 import configparser
+# import pysnooper
 
 from PyQt5.QtWidgets import (QMainWindow,
                              QApplication,
@@ -57,6 +58,7 @@ class MyQLineEdit(QLineEdit):
             self.setText(file_path[8:].replace('/','\\'))   # 删除local path多余开头
         else:
             self.setText(file_path[5:].replace('/','\\'))   # 删除network path多余开头
+
 
 class PostWindow(QMainWindow):
 
@@ -248,8 +250,8 @@ class PostWindow(QMainWindow):
         self.cbx21.setDisabled(True)
         self.cbx22 = QCheckBox('Nacelle Acc')
         self.cbx22.setDisabled(True)
-        # self.cbx23 = QCheckBox('Main ultimate')
-        # self.cbx23.setDisabled(True)
+        self.cbx23 = QCheckBox('Drive Train Fatigue')
+        self.cbx23.setDisabled(True)
 
         self.subgroup1 = QGroupBox('blade_sections')
         self.subgroup1.setFont(self.title_font)
@@ -323,7 +325,7 @@ class PostWindow(QMainWindow):
         self.sub03 = QGroupBox()
         self.subgrid03 = QGridLayout()
         self.subgrid03.addWidget(self.cbx16, 0, 0, 1, 4)
-        # self.subgrid03.addWidget(self.cbx22, 1, 0, 1, 4)
+        self.subgrid03.addWidget(self.cbx23, 1, 0, 1, 4)
         self.subgrid03.addWidget(self.cbx17, 2, 0, 1, 4)
         self.subgrid03.addWidget(self.cbx18, 3, 0, 1, 4)
         self.subgrid03.addWidget(self.cbx19, 4, 0, 1, 4)
@@ -557,9 +559,9 @@ class PostWindow(QMainWindow):
         self.cb_pst = QCheckBox('Post')
         self.cb_pst.setFont(self.cont_font)
         self.cb_pst.setDisabled(True)
-        self.cb_pst.clicked.connect(self.post_checked)
+        # self.cb_pst.clicked.connect(self.post_checked)
         self.cb_cmp = QCheckBox('Components')
-        self.cb_cmp.clicked.connect(self.component_checked)
+        # self.cb_cmp.clicked.connect(self.component_checked)
         self.cb_cmp.setFont(self.cont_font)
         self.cb_cmp.setDisabled(True)
         self.cb_main = QCheckBox('Main')
@@ -815,11 +817,8 @@ class PostWindow(QMainWindow):
     def get_variable(self):
 
         if self.lin1.text().upper().endswith('$PJ') or self.lin1.text().lower().endswith('prj'):
-            # print(self.lin1.text())
-
             try:
                 self.var_result = Get_Variables(self.lin1.text())
-                # print(self.var_result)
 
                 if self.var_result.br_flag:
                     self.cbx1.setDisabled(False)
@@ -882,7 +881,10 @@ class PostWindow(QMainWindow):
                 if any((self.var_result.bs_flag,self.var_result.bu_flag,self.var_result.br_mxy_flag,
                         self.var_result.brs1_mxy_flag,self.var_result.brs2_mxy_flag,self.var_result.brs3_mxy_flag)):
                     self.cbx16.setDisabled(False)
-                    # self.cbx16.setTristate(True)
+
+                # drive train
+                if self.var_result.dt_flag:
+                    self.cbx23.setDisabled(False)
 
                 # fatigue-tr/ts_0_40*40
                 if self.var_result.tr_flag:
@@ -1261,7 +1263,7 @@ class PostWindow(QMainWindow):
         # main variable
         cb_list = [self.cbx1, self.cbx2, self.cbx3, self.cbx4, self.cbx5, self.cbx7, self.cbx8, self.cbx9, self.cbx10,
                    self.cbx11, self.cbx12, self.cbx13, self.cbx14, self.cbx15, self.cbx16, self.cbx17, self.cbx18,
-                   self.cbx19, self.cbx20, self.cbx21, self.cbx22]
+                   self.cbx19, self.cbx20, self.cbx21, self.cbx22, self.cbx23]
         var_choosed = [cb.text() for cb in cb_list if cb.isChecked()]
         # print(var_choosed)
 
@@ -1363,22 +1365,13 @@ class PostWindow(QMainWindow):
 
     def post_checked(self):
 
-        # cb_list     = [self.cbx11, self.cbx12, self.cbx13, self.cbx14, self.cbx15]
-        # cmp_choosed = [True if cb.isEnabled() else False for cb in cb_list]
-        # print(cmp_choosed)
-
-        # if all(cmp_choosed):
-
         if self.cb_pst.isChecked():
-
             self.cbx11.setChecked(True)
             self.cbx12.setChecked(True)
             self.cbx13.setChecked(True)
             self.cbx14.setChecked(True)
             self.cbx15.setChecked(True)
-
         else:
-
             self.cbx11.setChecked(False)
             self.cbx12.setChecked(False)
             self.cbx13.setChecked(False)
@@ -1392,14 +1385,11 @@ class PostWindow(QMainWindow):
 
     def component_checked(self):
 
-        cb_list     = [self.cbx16, self.cbx17, self.cbx18, self.cbx19, self.cbx20, self.cbx21, self.cbx22]
+        cb_list     = [self.cbx16, self.cbx17, self.cbx18, self.cbx19, self.cbx20, self.cbx21, self.cbx22, self.cbx23]
         cmp_choosed = [True if cb.isEnabled() else False for cb in cb_list]
-        # print(cmp_choosed)
 
         if all(cmp_choosed):
-
             if self.cb_cmp.isChecked():
-
                 self.cbx16.setChecked(True)
                 self.cbx17.setChecked(True)
                 self.cbx18.setChecked(True)
@@ -1407,9 +1397,8 @@ class PostWindow(QMainWindow):
                 self.cbx20.setChecked(True)
                 self.cbx21.setChecked(True)
                 self.cbx22.setChecked(True)
-
+                self.cbx23.setChecked(True)
             else:
-
                 self.cbx16.setChecked(False)
                 self.cbx17.setChecked(False)
                 self.cbx18.setChecked(False)
@@ -1417,12 +1406,11 @@ class PostWindow(QMainWindow):
                 self.cbx20.setChecked(False)
                 self.cbx21.setChecked(False)
                 self.cbx22.setChecked(False)
-
+                self.cbx23.setChecked(False)
         else:
             self.cb_cmp.setChecked(False)
             QMessageBox.about(self, 'window', 'Please make sure all components are enabled!')
-        # print(self.cb_cmp.checkState())
-
+    # @pysnooper.snoop()
     def handle(self):
 
         self.check_input = False
@@ -1443,19 +1431,19 @@ class PostWindow(QMainWindow):
 
         # check input
         if self.cb_ult.isChecked() or self.cb_fat.isChecked() or self.cb_pst.isChecked() or self.cb_cmp.isChecked():
-            # print(any([self.cb_ult.isChecked(),self.cb_fat.isChecked(),self.cb_cmp.isChecked()]))
-
             # channel
             if (self.cb_fat.isChecked() or self.cb_ult.isChecked() or self.cb_main.isChecked()
                 or self.cb_pst.isChecked() or self.cb_cmp.isChecked()) and not result[0]:
                 QMessageBox.about(self, 'Warning', 'Please choose channel to output for fatigue or ultimate!')
 
             # blade section
-            elif (not result[1]) and any(x in result[0] for x in blade_flag) and (self.cb_fat.isChecked() or self.cb_ult.isChecked()):
+            elif ((not result[1]) and any(x in result[0] for x in blade_flag) and (self.cb_fat.isChecked() or
+                                                                                      self.cb_ult.isChecked())):
                 QMessageBox.about(self, 'Warning', 'Please choose blade section to output!')
 
             # tower section
-            elif (not result[2]) and 'Tower_sections' in result[0] and (self.cb_fat.isChecked() or self.cb_ult.isChecked()):
+            elif ((not result[2]) and 'Tower_sections' in result[0] and (self.cb_fat.isChecked() or
+                                                                             self.cb_ult.isChecked())):
                 QMessageBox.about(self, 'Warning', 'Please choose tower section to be output!')
 
             # output path
@@ -1467,8 +1455,8 @@ class PostWindow(QMainWindow):
                 QMessageBox.about(self, 'Warning', 'Please choose ultimate load case first!')
 
             # ultimate load case for component
-            elif self.cb_cmp.isChecked() and (self.cbx19.isChecked() or self.cbx20.isChecked() or
-                                                  self.cbx21.isChecked() or self.cbx22.isChecked()) and (not ult_list):
+            elif (any((self.cbx19.isChecked(),self.cbx20.isChecked(),self.cbx21.isChecked(),self.cbx22.isChecked()))
+                  and self.cb_cmp.isChecked() and (not ult_list)):
                 QMessageBox.about(self, 'Warning', 'Please choose ultimate load case first!')
 
             # ultimate load case for post
@@ -1486,8 +1474,9 @@ class PostWindow(QMainWindow):
                 QMessageBox.about(self, 'Warning', 'More than one dlc13 choosed in ultimate DLC!')
 
             # IEC61400-1 and ult_list need to be the same
-            elif (self.cb_ult.isChecked() or self.cbx13.isChecked() or self.cbx19.isChecked() or self.cbx20.isChecked()
-                  or self.cbx21.isChecked() or self.cbx22.isChecked()) and ('DLC25' in ult_list) and (self.sf_flag!='2'):
+            elif (any((self.cb_ult.isChecked(), self.cbx13.isChecked(), self.cbx19.isChecked(), self.cbx20.isChecked(),
+                       self.cbx21.isChecked(), self.cbx22.isChecked())) and ('DLC25' in ult_list) and (
+                        self.sf_flag!='2')):
                 QMessageBox.about(self, 'Warning', 'DLC25 not in IEC61400-1 ed3\n'
                                                    'Please choose a right safety factor!')
 
@@ -1496,12 +1485,13 @@ class PostWindow(QMainWindow):
                 QMessageBox.about(self, 'Warning', 'Please choose fatigue load case first!')
 
             # fatigue load case for post function
-            elif (self.cbx11.isChecked() or self.cbx12.isChecked() or self.cbx14.isChecked() or self.cbx15.isChecked())\
-                    and (not fat_list):
+            elif (any((self.cbx11.isChecked(),self.cbx12.isChecked(),self.cbx14.isChecked(),self.cbx15.isChecked()))
+                  and (not fat_list)):
                 QMessageBox.about(self, 'Warning', 'Please choose fatigue load case first!')
 
             # fatigue load case for component function
-            elif (self.cbx16.isChecked() or self.cbx17.isChecked() or self.cbx18.isChecked()) and (not fat_list):
+            elif (any((self.cbx16.isChecked(),self.cbx17.isChecked(),self.cbx18.isChecked(), self.cbx23.isChecked()))
+                  and (not fat_list)):
                 QMessageBox.about(self, 'Warning', 'Please choose fatigue load case first!')
 
             elif (self.cb_fat.isChecked() or self.cb_cmp.isChecked() or self.cb_pst.isChecked()) and (not path_lct):
@@ -1513,10 +1503,23 @@ class PostWindow(QMainWindow):
 
             elif self.cbx21.isChecked() and ('DLC12' not in fat_list):
                 QMessageBox.about(self, 'Warning', 'Please make choose DLC12 in fatigue list!!')
+
+            elif any((self.cbx14.isChecked(),self.cbx15.isChecked(),self.cbx16.isChecked(),self.cbx17.isChecked(),
+                      self.cbx18.isChecked(),self.cbx23.isChecked(),self.cb_fat.isChecked())):
+                if not self.lin8.text():
+                    QMessageBox.about(self, 'Warning', 'Please define life first!')
+                elif not self.lin9.text():
+                    QMessageBox.about(self, 'Warning', 'Please define equivalent cycles first!')
+                elif not self.lin8.text().isnumeric():
+                    QMessageBox.about(self, 'Warning', 'Please define a right life number!')
+                elif not self.lin9.text().isnumeric():
+                    QMessageBox.about(self, 'Warning', 'Please define a life cycle number!')
+                else:
+                    self.check_input = True
+
             else:
                 self.check_input = True
             # print(self.check_input)
-
         else:
             QMessageBox.about(self, 'Warning', 'Please choose post type first!')
 
@@ -1524,8 +1527,7 @@ class PostWindow(QMainWindow):
             if self.check_input:
                 # ultimate
                 if self.cb_ult.isChecked():
-
-                    # sf_factor = False if self.rad_sf.isChecked() else True
+                    print('Begin to handle ultimate...')
                     mean_ind  = self.lin5.text().strip()
                     half_ind  = self.lin6.text().strip()
 
@@ -1552,28 +1554,24 @@ class PostWindow(QMainWindow):
                         if chan == 'User':
                             ult_chan['bus'] = [self.var_result.bus_var_list, result[1]]
 
+                    # 07_Ultimate
+                    print('Begin to write 07_Ultimate')
                     path = os.path.join(self.lin4.text(), '07_Ultimate')
-
-                    print('began to handle main ultimate')
-                    # include safety factor
                     if self.lin10.text():
                         path_ult = os.path.join(path, self.lin10.text()+'_Inclsf')
                     else:
                         path_ult = os.path.join(path, '08_Main_Inclsf')
 
-                    # print(path_ult)
-                    # print(ult_chan)
                     ult_res1 = Ultimate(run_path=path_run, ult_path=path_ult, dlc_list=ult_list, cha_dict=ult_chan,
                                         iec_stdard=self.sf_flag, etm_option=self.etm_opt, mean_index=mean_ind,
-                                        half_index=half_ind,include_sf=True)
+                                        half_index=half_ind, include_sf=True)
                     self.post_list.append(path_ult)
 
-                    # exclude safety factor
                     if self.lin10.text() and (not self.cb_main.isChecked()):
                         path_ult = os.path.join(path, self.lin10.text()+'_Exclsf')
                     else:
                         path_ult = os.path.join(path, '09_Main_Exclsf')
-                    # print(path_ult)
+
                     ult_res2 = Ultimate(run_path=path_run, ult_path=path_ult, dlc_list=ult_list, cha_dict=ult_chan,
                                         iec_stdard=self.sf_flag, etm_option=self.etm_opt, mean_index=mean_ind,
                                         half_index=half_ind,include_sf=False)
@@ -1581,7 +1579,7 @@ class PostWindow(QMainWindow):
 
                 # fatigue
                 if self.cb_fat.isChecked():
-
+                    print('Begin to handle fatigue...')
                     num_bins = self.lin7.text()
                     des_life = self.lin8.text()
                     eq_cycle = self.lin9.text()+'E+07'
@@ -1608,9 +1606,8 @@ class PostWindow(QMainWindow):
                         if chan == 'User':
                             fat_chan['bus'] = [self.var_result.bus_fat_list, result[1]]
 
+                    print('Begin to write 08_Fatigue')
                     path = os.path.join(self.lin4.text(), '08_Fatigue')
-
-                    print('began to handle main fatigue')
                     if self.lin10.text() and (not self.cb_main.isChecked()):
                         path_fat = os.path.join(path, self.lin10.text())
                     else:
@@ -1619,7 +1616,7 @@ class PostWindow(QMainWindow):
                     memo = os.path.join(self.lin4.text(), '08_Fatigue'+os.sep+'00_Life_%s_%s' %(des_life,eq_cycle))
                     if not os.path.exists(memo):
                         os.makedirs(memo)
-                    # print(fat_chan)
+
                     fat_res = Fatigue(run_path=path_run,
                                       fat_path=path_fat,
                                       lct_path=path_lct,
@@ -1629,11 +1626,10 @@ class PostWindow(QMainWindow):
                                       eq_cycle=eq_cycle,
                                       fat_chan=fat_chan)
                     self.post_list.append(path_fat)
-                    # run_result[0].append(fat_res.finish_fat)
 
                 # post
                 if self.cb_pst.isChecked():
-                    #
+                    print('Begin to handle post...')
                     mean_ind = self.lin5.text().strip()
                     half_ind = self.lin6.text().strip()
 
@@ -1642,14 +1638,9 @@ class PostWindow(QMainWindow):
                     des_life = self.lin8.text()
                     eq_cycle = self.lin9.text()+'E+07'
 
-                    # cb_list = [self.cbx11, self.cbx12, self.cbx13, self.cbx14, self.cbx15]
-                    # pst_choosed = [True for cb in cb_list if cb.isChecked()]
-
-                    print('begin to handle post')
-                    # 01_Extrapolation
                     # 02_Bstats
                     if self.cbx11.isChecked():
-                        print('begin to handle basic statistics')
+                        print('Begin to write 02_Bstats')
                         path_bs = os.path.join(self.lin4.text(), '02_Bstats')
                         if self.var_result.mb_flag:
                             chan_dict = {'mb':[['Hub wind speed magnitude','07'],
@@ -1695,7 +1686,7 @@ class PostWindow(QMainWindow):
 
                     # 03_Clearance
                     if self.cbx13.isChecked():
-                        print('begin to handle tower clearance')
+                        print('Begin to write 03_Clearance')
                         path_tc = os.path.join(self.lin4.text(), '03_Clearance')
                         if self.var_result.tc_flag:
                             # dynamic
@@ -1732,28 +1723,46 @@ class PostWindow(QMainWindow):
 
                     # 04_Combination
                     if self.cbx12.isChecked():
+                        print('Begin to write 04_Combination')
                         path_comb = os.path.join(self.lin4.text(), '04_Combination')
                         if self.var_result.br_flag:
-                            chan_dict = {'br': ['Blade root 1 Mx', 'Blade root 1 My']}
-                            Combination(path_run, path_comb, fat_list, chan_dict, '22', '700')
+                            chan_dict = {'br': [('Blade root 1 Mx'), ('Blade root 1 My')]}
+                            Combination(path_run, path_comb, fat_list, chan_dict, '22', '700', list(range(0,360,15)))
 
                         if self.var_result.bs_flag:
-                            chan_dict = {'brs1': ['Blade 1 Mx (Root axes)', 'Blade 1 My (Root axes)']}
-                            Combination(path_run, path_comb, fat_list, chan_dict, '41', '800')
+                            chan_dict = {'brs1': [('Blade 1 Mx (Root axes)','0','0'), ('Blade 1 My (Root axes)','0','0')]}
+                            Combination(path_run, path_comb, fat_list, chan_dict, '41', '800', list(range(0,360,15)))
 
                             if len(self.var_result.brs_var_list)>8:
-                                chan_dict = {'brs2': ['Blade 2 Mx (Root axes)', 'Blade 2 My (Root axes)']}
+                                chan_dict = {'brs2': [('Blade 2 Mx (Root axes)','0','0'), ('Blade 2 My (Root axes)','0','0')]}
                                 path_comb = os.path.join(self.lin4.text(), '04_Combination')
-                                Combination(path_run, path_comb, fat_list, chan_dict, '42', '810')
+                                Combination(path_run, path_comb, fat_list, chan_dict, '42', '810', list(range(0,360,15)))
 
-                                chan_dict = {'brs3': ['Blade 3 Mx (Root axes)', 'Blade 3 My (Root axes)']}
+                                chan_dict = {'brs3': [('Blade 3 Mx (Root axes)','0','0'), ('Blade 3 My (Root axes)','0','0')]}
                                 path_comb = os.path.join(self.lin4.text(), '04_Combination')
-                                Combination(path_run, path_comb, fat_list, chan_dict, '43', '820')
+                                Combination(path_run, path_comb, fat_list, chan_dict, '43', '820', list(range(0,360,15)))
+
+                        # combination for all blade section by 30deg
+                        if self.var_result.bs_flag:
+                            # get blade section list
+                            bld_sec_list = []
+                            if self.var_result.bra_out_type == '1':
+                                bld_sec_list = self.var_result.bld_radius[0]
+                            elif self.var_result.bra_out_type == 'A':
+                                bld_sec_list = self.var_result.bld_radius
+
+                            for index,sec in enumerate(bld_sec_list):
+                                chan_name = 'brs_%.3f' %float(sec)
+                                chan_dict = {chan_name: [('Blade 1 Mx (Root axes)', sec, index+1),
+                                                         ('Blade 1 My (Root axes)', sec, index+1)]}
+                                path_comb = os.path.join(self.lin4.text(), '04_Combination')
+                                ind = '%s' %(index+900)
+                                Combination(path_run, path_comb, fat_list, chan_dict, '41', ind, list(range(0,360,30)))
                         self.post_list.append(path_comb)
 
                     # 05_LDD
                     if self.cbx15.isChecked():
-                        print('begin to handle ldd')
+                        print('Begin to write 05_LDD')
                         path_ldd = os.path.join(self.lin4.text(), '05_LDD')
                         if self.var_result.hs_flag:
                             ldd_chan = {'hs':[self.var_result.hs_fat_list]}
@@ -1776,7 +1785,7 @@ class PostWindow(QMainWindow):
 
                     # 06_LRD
                     if self.cbx14.isChecked():
-                        print('begin to handle lrd')
+                        print('Begin to write 06_LRD')
                         path_lrd = os.path.join(self.lin4.text(), '06_LRD')
                         if (self.var_result.br_flag and self.var_result.ws_flag):
                             lrd_chan = {'br':[self.var_result.br_fat_list[0]],
@@ -1795,11 +1804,8 @@ class PostWindow(QMainWindow):
 
                 # component
                 if self.cb_cmp.isChecked():
-
-                    # ultimate
-                    mean_ind  = self.lin5.text().strip()
-                    half_ind  = self.lin6.text().strip()
-                    # fatigue
+                    print('Begin to handle component...')
+                    # ************************ 06_Fatigue  *********************************************
                     num_bins = self.lin7.text()
                     des_life = self.lin8.text()
                     eq_cycle = self.lin9.text()+'E+07'
@@ -1812,11 +1818,9 @@ class PostWindow(QMainWindow):
                     else:
                         self.etm_opt = False
 
-                    print('begin to handle component')
-                    # ************************ 06_Fatigue  *********************************************
                     # 01_BRS
                     if self.var_result.bs_flag and self.cbx16.isChecked():
-                        print('begin to write 01_BRS')
+                        print('Begin to write 01_BRS')
                         fat_chan = dict({'brs1': [self.var_result.brs_fat_list[0], self.var_result.bld_radius]})
                         path     = os.path.join(path_fat, r'01_BRS\brs1')
                         Fatigue(path_run, path, path_lct, fat_list, num_bins, des_life, eq_cycle, fat_chan)
@@ -1832,7 +1836,7 @@ class PostWindow(QMainWindow):
 
                     # 02_BUS
                     if self.var_result.bu_flag and self.cbx16.isChecked():
-                        print('begin to write 02_BUS')
+                        print('Begin to write 02_BUS')
                         fat_chan = dict({'bus1': [self.var_result.bus_fat_list[0], self.var_result.bld_radius]})
                         path     = os.path.join(path_fat, r'02_BUS\bus1')
                         Fatigue(path_run, path, path_lct, fat_list, num_bins, des_life, eq_cycle, fat_chan)
@@ -1849,7 +1853,7 @@ class PostWindow(QMainWindow):
 
                     # 03_BR_Mxy_Ang
                     if self.var_result.br_mxy_flag and self.cbx16.isChecked():
-                        print('begin to write 03_BR_Mxy_Seg')
+                        print('Begin to write 03_BR_Mxy_Seg')
                         fat_chan = dict({'br_comb': [self.var_result.br_mxy_list]})
                         # print(self.var_result.br_mxy_list)
                         path     = os.path.join(path_fat, '03_BR_Mxy_Seg')
@@ -1858,27 +1862,31 @@ class PostWindow(QMainWindow):
 
                     # 04_BRS_Mxy_Ang
                     if self.cbx16.isChecked():
-                        print('begin to write 04_BRS_Mxy_Seg')
+                        print('Begin to write 04_BRS_Mxy_Seg')
                         path = os.path.join(path_fat, '04_BRS_Mxy_Seg')
+                        fat_chan = dict()
                         if self.var_result.brs1_mxy_flag:
-                            fat_chan = dict({'brs1_comb': [self.var_result.brs1_mxy_list]})
-                            # print(self.var_result.brs_mxy_list)
-                            Fatigue(path_run, path, path_lct, fat_list, num_bins, des_life, eq_cycle, fat_chan)
-
+                            fat_chan.update({'brs1_comb': [self.var_result.brs1_mxy_list]})
                         if self.var_result.brs2_mxy_flag:
-                            fat_chan = dict({'brs2_comb': [self.var_result.brs2_mxy_list]})
-                            # print(self.var_result.brs_mxy_list)
-                            Fatigue(path_run, path, path_lct, fat_list, num_bins, des_life, eq_cycle, fat_chan)
-
+                            fat_chan.update({'brs2_comb': [self.var_result.brs2_mxy_list]})
                         if self.var_result.brs3_mxy_flag:
-                            fat_chan = dict({'brs3_comb': [self.var_result.brs3_mxy_list]})
-                            # print(self.var_result.brs_mxy_list)
-                            Fatigue(path_run, path, path_lct, fat_list, num_bins, des_life, eq_cycle, fat_chan)
+                            fat_chan.update({'brs3_comb': [self.var_result.brs3_mxy_list]})
+                        Fatigue(path_run, path, path_lct, fat_list, num_bins, des_life, eq_cycle, fat_chan)
+
+                        if self.var_result.brs_mxy_flag:
+                            path = os.path.join(path_fat, r'04_BRS_Mxy_Seg\brs_comb')
+                            fat_chan = dict()
+                            for sec_name, var_list in self.var_result.brs_mxy_list.items():
+                                var_ext = []
+                                for var in var_list:
+                                    var_ext.append((var, self.var_result.var_ext[var]))
+                                fat_chan.update({sec_name: [var_ext]})
+                            Fatigue(path_run, path, path_lct, fat_list, num_bins, des_life, eq_cycle, fat_chan, True)
                         self.post_list.append(path)
 
                     # 06_Tower
                     if self.var_result.tr_flag and self.cbx17.isChecked() and result[2]:
-                        print('begin to write 06_Tower')
+                        print('Begin to write 06_Tower')
                         fat_chan = dict({'tr': [self.var_result.tr_fat_list, result[2]]})
                         path     = os.path.join(path_fat, '06_Tower')
                         Fatigue(path_run, path, path_lct, fat_list, num_bins, des_life, eq_cycle, fat_chan)
@@ -1888,7 +1896,7 @@ class PostWindow(QMainWindow):
 
                     # 07_Foundation
                     if self.var_result.tr_flag and self.cbx18.isChecked() and result[2]:
-                        print('begin to write 07_Foundation')
+                        print('Begin to write 07_Foundation')
                         fat_chan = dict({'tr': [self.var_result.tr_fat_list, result[2]]})
                         path     = os.path.join(path_fat, '07_Foundation')
                         Fatigue(path_run, path, path_lct, fat_list, 40, des_life, eq_cycle, fat_chan)
@@ -1896,32 +1904,73 @@ class PostWindow(QMainWindow):
                     elif self.cbx18.isChecked() and not result[2]:
                         raise Exception('Please choose tower section for Foundation Fatigue option!')
 
+                    # 08_DriveTrain
+                    if self.var_result.dt_flag and self.cbx23.isChecked():
+                        print('Begin to write 08_DriveTrain')
+                        fat_chan = dict({'dt': [self.var_result.dt_var_list[9:11]]})
+                        path = os.path.join(path_fat, '08_DriveTrain')
+                        Fatigue(path_run, path, path_lct, fat_list, 64, des_life, eq_cycle, fat_chan)
+                        self.post_list.append(path)
+
                     # ************************  07_Ultimate   ********************************************************
+                    mean_ind  = self.lin5.text().strip()
+                    half_ind  = self.lin6.text().strip()
+
                     if self.var_result.bs_flag and self.cbx19.isChecked():
                         ult_chan = dict({'brs': [self.var_result.brs_var_list, self.var_result.bld_radius]})
                         # 01_BRS_Inclsf
+                        print('Begin to write 01_BRS_Inclsf')
                         path     = os.path.join(path_ult, '01_BRS_Inclsf')
-                        Ultimate(path_run, path, ult_list, ult_chan, self.sf_flag, self.etm_opt, mean_ind, half_ind, True)
+                        Ultimate(path_run, path, ult_list, ult_chan, self.sf_flag, self.etm_opt, mean_ind, half_ind,
+                                 True)
                         self.post_list.append(path)
                         # 02_BRS_Exclsf
+                        print('Begin to write 02_BRS_Exclsf')
                         path     = os.path.join(path_ult, '02_BRS_Exclsf')
-                        Ultimate(path_run, path, ult_list, ult_chan, self.sf_flag, self.etm_opt, mean_ind, half_ind, False)
+                        Ultimate(path_run, path, ult_list, ult_chan, self.sf_flag, self.etm_opt, mean_ind, half_ind,
+                                 False)
                         self.post_list.append(path)
 
                     if self.var_result.bu_flag and self.cbx19.isChecked():
                         ult_chan = dict({'bus': [self.var_result.bus_var_list, self.var_result.bld_radius]})
                         # 03_BUS_Inclsf
+                        print('Begin to write 03_BUS_Inclsf')
                         path     = os.path.join(path_ult, '03_BUS_Inclsf')
-                        Ultimate(path_run, path, ult_list, ult_chan, self.sf_flag, self.etm_opt, mean_ind, half_ind, True)
+                        Ultimate(path_run, path, ult_list, ult_chan, self.sf_flag, self.etm_opt, mean_ind, half_ind,
+                                 True)
                         self.post_list.append(path)
                         # 04_BUS_Exclsf
+                        print('Begin to write 04_BUS_Exclsf')
                         path     = os.path.join(path_ult, '04_BUS_Exclsf')
-                        Ultimate(path_run, path, ult_list, ult_chan, self.sf_flag, self.etm_opt, mean_ind, half_ind, False)
+                        Ultimate(path_run, path, ult_list, ult_chan, self.sf_flag, self.etm_opt, mean_ind, half_ind,
+                                 False)
+                        self.post_list.append(path)
+
+                    if self.var_result.brs_mxy_flag and self.cbx19.isChecked():
+                        ult_chan = dict()
+                        for sec_name, var_list in self.var_result.brs_mxy_list.items():
+                            var_ext = []
+                            for var in var_list:
+                                var_ext.append((var, self.var_result.var_ext[var]))
+                            ult_chan.update({sec_name: var_ext})
+
+                        # 14_BRS_Seg_Inclsf
+                        print('Begin to write 14_BRS_Seg_Inclsf')
+                        path     = os.path.join(path_ult, '14_BRS_Seg_Inclsf')
+                        Ultimate(path_run, path, ult_list, ult_chan, self.sf_flag, self.etm_opt, mean_ind,
+                                 half_ind, True, True)
+                        self.post_list.append(path)
+                        # 15_BRS_Seg_Exclsf
+                        print('Begin to write 15_BRS_Seg_Exclsf')
+                        path     = os.path.join(path_ult, '15_BRS_Seg_Exclsf')
+                        Ultimate(path_run, path, ult_list, ult_chan, self.sf_flag, self.etm_opt, mean_ind,
+                                 half_ind, False, True)
                         self.post_list.append(path)
 
                     if self.var_result.hr_flag and self.cbx20.isChecked():
                         ult_chan = dict({'hr': self.var_result.hr_all_list})
                         # 05_HR_BR_Inclsf
+                        print('Begin to write 05_HR_BR_Inclsf')
                         path     = os.path.join(path_ult, '05_HR_BR_Inclsf')
                         Ultimate(path_run, path, ult_list, ult_chan, self.sf_flag, self.etm_opt, mean_ind, half_ind, True)
                         self.post_list.append(path)
@@ -1931,6 +1980,7 @@ class PostWindow(QMainWindow):
                                          'hs': self.var_result.hs_var_list})
                         ult_dlc8 = [lc for lc in ult_list if 'DLC8' in lc]
                         # 06_HR_onlydlc8
+                        print('Begin to write 02_BRS_Exclsf')
                         path     = os.path.join(path_ult, '06_HR_Onlydlc8\Inclsf')
                         Ultimate(path_run, path, ult_dlc8, ult_chan, self.sf_flag, self.etm_opt, mean_ind, half_ind, True)
                         self.post_list.append(path)
@@ -1938,6 +1988,7 @@ class PostWindow(QMainWindow):
                         Ultimate(path_run, path, ult_dlc8, ult_chan, self.sf_flag, self.etm_opt, mean_ind, half_ind, False)
                         self.post_list.append(path)
                         # 07_HR_wodlc8_Exclsf
+                        print('Begin to write 02_BRS_Exclsf')
                         path     = os.path.join(path_ult, '07_HR_Wodlc8\Inclsf')
                         ult_wo8x = [dlc for dlc in ult_list if 'DLC8' not in dlc.upper()]
                         self.post_list.append(path)
@@ -1949,17 +2000,17 @@ class PostWindow(QMainWindow):
                     if self.var_result.tr_flag and self.cbx21.isChecked() and result[2]:
                         ult_chan = dict({'tr': [self.var_result.tr_var_list, result[2]]})
                         # 10_Tower_Inclsf
-                        print('begin to write 10_Tower_Inclsf')
+                        print('Begin to write 10_Tower_Inclsf')
                         path     = os.path.join(path_ult, '10_Tower_Inclsf')
                         Ultimate(path_run, path, ult_list, ult_chan, self.sf_flag, self.etm_opt, mean_ind, half_ind, True)
                         self.post_list.append(path)
                         # 11_Tower_Exclsf
-                        print('begin to write 11_Tower_Exclsf')
+                        print('Begin to write 11_Tower_Exclsf')
                         path     = os.path.join(path_ult, '11_Tower_Exclsf')
                         Ultimate(path_run, path, ult_list, ult_chan, self.sf_flag, self.etm_opt, mean_ind, half_ind, False)
                         self.post_list.append(path)
                         # 12_Tower_dlc12
-                        print('begin to write 10_Tower_dlc12')
+                        print('Begin to write 10_Tower_dlc12')
                         path     = os.path.join(path_ult, '12_Tower_dlc12')
                         dlc_list = [lc for lc in fat_list if lc=='DLC12']
                         Ultimate(path_run, path, dlc_list, ult_chan, self.sf_flag, self.etm_opt, mean_ind, half_ind, False)
@@ -1971,14 +2022,13 @@ class PostWindow(QMainWindow):
                     if self.var_result.nac_flag and self.cbx22.isChecked():
                         ult_chan = dict({'nac': self.var_result.nac_acc_list})
                         # 10_Tower_Inclsf
-                        print('begin to write 13_Nacelle_Acc')
+                        print('Begin to write 13_Nacelle_Acc')
                         path = os.path.join(path_ult, '13_Nacelle_Acc')
                         Ultimate(path_run, path, ult_list, ult_chan, self.sf_flag, self.etm_opt, mean_ind, half_ind, True)
                         self.post_list.append(path)
                 return True
             else:
                 return False
-
         except Exception as e:
             QMessageBox.about(self, 'Window', 'Error occurs when generating post file\n%s'%e)
             print('Error occurs when generating post file\n%s'%e)
@@ -1989,7 +2039,7 @@ class PostWindow(QMainWindow):
         res = self.handle()
 
         if self.post_list and res:
-            print('\nbegin to write joblist')
+            print('\nBegin to write joblist')
             try:
                 joblist_dir = os.path.join(self.lin4.text(), '00_Joblist')
                 if not os.path.isdir(joblist_dir):
