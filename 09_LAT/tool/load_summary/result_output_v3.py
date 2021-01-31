@@ -200,7 +200,6 @@ class excel_operation:
 
         row_num = sheet.max_row
         row_max = row_num-(row_num-1)%5
-        # print(row_max)
 
         print('Begin to read excel...')
         self.loopname = [sheet[i][0].value for i in range(2,row_max+1) if sheet[i][0].value != None]
@@ -209,10 +208,6 @@ class excel_operation:
         self.lct_list = [sheet[i][2].value for i in range(2,row_max+1) if sheet[i][1].value == 'LCT']
         self.ult_list = [sheet[i][2].value for i in range(2,row_max+1) if sheet[i][1].value == 'Ultimate']
         self.fat_list = [sheet[i][2].value for i in range(2,row_max+1) if sheet[i][1].value == 'Rainflow']
-        for i in range(2, row_max+1):
-            print(i)
-            if sheet[i][1].value == 'Post':
-                print(sheet[i][2].value)
 
         print('LPN :', self.loopname)
         print('ULT :', self.ult_list)
@@ -225,12 +220,12 @@ class excel_operation:
 
         if any(self.pst_list):
             for i in range(loop_num):
-
                 post_path = self.pst_list[i]
+
                 if not post_path:
                     continue
-                file_list = os.listdir(post_path)
 
+                file_list = os.listdir(post_path)
                 for file in file_list:
                     if '07_ultimate' == file.lower():
                         nac_acc = os.path.join(post_path, r'07_Ultimate\13_Nacelle_Acc')
@@ -274,20 +269,13 @@ class excel_operation:
                         else:
                             self.mbl_list.append(None)
 
-        # print('Ultimate path:', self.ult_list)
-        # print('Fatigue path :', self.fat_list)
-        # print('LDD path     :', self.ldd_list)
-        # print('LRD path     :', self.lrd_list)
-        # print('Nacelle acc  :', self.nac_list)
-        # print('Pitch bearing:', self.pbl_list)
-        # print('Gearbox path :', self.get_list)
-        # print('Main bearing :', self.mbl_list)
         print('LDD :', self.ldd_list)
         print('LRD :', self.lrd_list)
         print('NAC :', self.nac_list)
         print('PBL :', self.pbl_list)
         print('GET :', self.get_list)
         print('MBL :', self.mbl_list)
+        print()
 
     def get_result(self):
 
@@ -428,7 +416,7 @@ class excel_operation:
 
             if config.has_section('Slope M'):
                 options = config.options("Slope M")
-                print(options)
+                # print(options)
                 self.var_m['Blade principal axes'] = config.get('Slope M','blade principal axes') \
                     if 'blade principal axes' in options else '10.0'
                 self.var_m['Blade aerodynamic axes'] = config.get('Slope M','blade aerodynamic axes') \
@@ -447,7 +435,6 @@ class excel_operation:
                     if 'yaw bearing' in options else '4.0'
                 self.var_m['Tower'] = config.get('Slope M','tower') \
                     if 'tower' in options else '4.0'
-                print(self.var_m.items())
 
             if config.has_section('Gearbox Equivalent Torque'):
                 self.get_m = config.get('Gearbox Equivalent Torque', 'm')
@@ -482,7 +469,7 @@ class excel_operation:
 
             print('Begin to write ultimate result...')
             if 'Sheet' in sheet_names:
-                sheet_ultimate       = table['Sheet']
+                sheet_ultimate = table['Sheet']
                 sheet_ultimate.title = 'Ultimate'
 
             # write ultimate
@@ -558,6 +545,7 @@ class excel_operation:
                             pat = self.loop_dlc_path[loop_name][self.loop_br_mx[loop_name][var][0]]
                             hyper2 = '=HYPERLINK("{}","{}")'.format(pat, pat)
                             sheet_ultimate.cell(row=row_index+1, column=i*6+4, value=hyper2)
+                            sheet_ultimate.cell(row=row_index+1, column=i*6+4).style = link
                             sheet_ultimate.cell(row=row_index+1, column=i*6+5, value=rat)
                             var = var_list[1]
                             sheet_ultimate.cell(row=row_index+1, column=i*6+1, value=var)
@@ -692,14 +680,16 @@ class excel_operation:
             fat_chan_list.sort()
             # print(fat_chan_list)
             self.get_m_slope()
+            print('Slope m info...')
+            for k,v in self.var_m.items():
+                print('%s: %s' %(k, v))
+            print()
 
         if self.new_app and self.fatigue:
             print('Begin to write fatigue...')
-
             fatigue = table.create_sheet('Fatigue')
 
             for i in range(lp_num):
-
                 print('Begin to write: ', self.loopname[i])
 
                 # 表头：
@@ -718,29 +708,23 @@ class excel_operation:
                 # print(channels)
 
                 tow_ind = 0
-
                 tower_num = 0
 
                 for j in range(len(channels)):
-
                     ch_name = channels[j]
-                    print(ch_name)
+                    # print(ch_name)
 
                     if 'Tower' in ch_name:
                         tower_num += 1
 
                     if ch_name:
-
                         chan_var = self.lp_chan_var[lp_name][channels[j]]  # list, len=6
                         # print(ch_name, chan_var)
 
                         if len(chan_var) != 6:
-
                             print('Warning: not 6 variables in ' + lp_name + os.sep + channels[j])
 
-                        for k in range(6):     #for k in range(len(chan_var)):
-                            # print(k)
-
+                        for k in range(6):
                             # get row index for each variables
                             if 'Tower' not in ch_name:
                                 row_index = 4+fat_chan_list.index(ch_name)*7+k+1
@@ -749,12 +733,9 @@ class excel_operation:
                                 tow_ind  += int((k+1)/6)
 
                             var = chan_var[k]
-                            print(ch_name)
-                            # ch  = ''.join([_ for _ in ch_name if _.isalpha()])
-                            if 'Tower' not in ch_name:
-                                m = '4.0' if ch_name not in self.var_m.keys() else self.var_m[ch_name]
-                            else:
-                                m = '4.0' if 'Tower' not in self.var_m.keys() else self.var_m['Tower']
+
+                            chan = [k for k, v in self.var_m.items() if k in ch_name]
+                            m = '4.0' if not chan else self.var_m[chan[0]]
 
                             # equivalent fatigue load
                             fat_eq = float(self.lp_var_fat[lp_name][var][m]['Total'])/1000
@@ -770,11 +751,9 @@ class excel_operation:
                             fatigue.cell(row=row_index, column=i*5+2, value='%.1f' % float(m))
                             fatigue.cell(row=row_index, column=i*5+3, value=fat_eq)
                             fatigue.cell(row=row_index, column=i*5+4, value=rat)
-
                 print('loop %s is done!' %(i+1))
 
             SetFormat().set_fatigue(fatigue)
-
             print('Fatigue loads is done! \n')
 
         # ***************************** Fatigue_wind ******************************************
@@ -784,11 +763,12 @@ class excel_operation:
             print('Begin to write fatigue_wind...')
             # loops
             wind_list = []
-            ws_max    = 0
+            # ws_max    = 0
             for lp, ws in self.lp_v_list.items():
-                if len(ws) > ws_max:
-                    ws_max    = len(ws)
-                    wind_list = ws
+                wind_list.extend(ws)
+            wind_list = list(set(wind_list))
+            wind_list.sort()
+            ws_max = len(wind_list)
 
             for i in range(lp_num):
                 print('Begin to write: ', self.loopname[i])
