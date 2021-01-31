@@ -1,13 +1,13 @@
 [Slope M]
-blade aerodynamic axes = 4.0
-blade principal axes = 4.0
-blade root axes = 4.0
-blade user axes = 4.0
-blade root = 9.0
-hub rotating = 4.0
-hub stationary = 4.0
-yaw bearing = 4.0
-tower = 4.0
+blade aerodynamic axes = 5.0
+blade principal axes = 5.0
+blade root axes = 5.0
+blade user axes = 5.0
+blade root = 5.0
+rotating hub = 5.0
+stationary hub = 5.0
+yaw bearing = 5.0
+tower = 5.0
 
 [Gearbox Equivalent Torque]
 m = 3.333333
