@@ -18,7 +18,7 @@ from PyQt5.QtWidgets import (QMainWindow,
                              QGroupBox)
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5 import QtCore
-from PyQt5.QtCore import QThread, pyqtSignal
+# from PyQt5.QtCore import QThread, pyqtSignal
 
 import multiprocessing as mp
 
