@@ -64,7 +64,7 @@ class Delete_File(object):
                 print(file_path)
     
     def remove_extension(self, path, ext_list):
-    
+        extension_list = [(os.extsep+ext).upper() if not ext.startswith(os.extsep) else ext.upper() for ext in ext_list]
         file_list = os.listdir(path)
         # print(file_list)
         for file in file_list:
@@ -72,7 +72,7 @@ class Delete_File(object):
             file_path = os.path.join(path, file)
             extension = os.path.splitext(file)[1]
     
-            if extension.upper() in ext_list:
+            if extension.upper() in extension_list:
                 os.remove(file_path)
                 print(file_path)
     
