@@ -41,6 +41,23 @@ from tool.post_assistant.Write_Probability import Probability
 from tool.post_assistant.Write_Steadytc import Steadytc
 from tool.post_assistant.Write_Combination import Combination
 
+
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        pass
+
+    try:
+        import unicodedata
+        unicodedata.numeric(s)
+        return True
+    except (TypeError, ValueError):
+        pass
+    return False
+
+
 class MyQLineEdit(QLineEdit):
     def __init__(self):
         super().__init__()
@@ -505,13 +522,13 @@ class PostWindow(QMainWindow):
         self.lbl8.setFont(self.cont_font)
         self.lin8 = QLineEdit()
         self.lin8.setFont(self.cont_font)
-        self.lin8.setText('25')
+        # self.lin8.setText('25')
         self.lbl9 = QLabel('Eq_cycles\n(1E+7)')
         self.lbl9.setAlignment(QtCore.Qt.AlignRight)
         self.lbl9.setFont(self.cont_font)
         self.lin9 = QLineEdit()
         self.lin9.setFont(self.cont_font)
-        self.lin9.setText('1')
+        # self.lin9.setText('1')
 
         self.subgrid2 = QGridLayout()
         self.subgrid2.addWidget(self.lbl7, 0, 0, 1, 1)
@@ -1506,14 +1523,14 @@ class PostWindow(QMainWindow):
 
             elif any((self.cbx14.isChecked(),self.cbx15.isChecked(),self.cbx16.isChecked(),self.cbx17.isChecked(),
                       self.cbx18.isChecked(),self.cbx23.isChecked(),self.cb_fat.isChecked())):
-                if not self.lin8.text():
-                    QMessageBox.about(self, 'Warning', 'Please define life first!')
-                elif not self.lin9.text():
-                    QMessageBox.about(self, 'Warning', 'Please define equivalent cycles first!')
-                elif not self.lin8.text().isnumeric():
-                    QMessageBox.about(self, 'Warning', 'Please define a right life number!')
-                elif not self.lin9.text().isnumeric():
-                    QMessageBox.about(self, 'Warning', 'Please define a life cycle number!')
+                # if not self.lin8.text():
+                #     QMessageBox.about(self, 'Warning', 'Please define life first!')
+                # elif not self.lin9.text():
+                #     QMessageBox.about(self, 'Warning', 'Please define equivalent cycles first!')
+                if not is_number(self.lin8.text()):
+                    QMessageBox.about(self, 'Warning', 'Design life is not a number!')
+                elif not is_number(self.lin9.text()):
+                    QMessageBox.about(self, 'Warning', 'Equivalent cycle is not a number!')
                 else:
                     self.check_input = True
 
