@@ -8,6 +8,8 @@ v1.1: write_rainflow -> write2singletxt(), write2multitxt(), write2excel()
 
 import os
 import numpy as np
+# import pysnooper
+
 try:
     from tool.post_export.readRainflow_v1_0 import readRainflow
     import tool.post_export.reorderVariable as rv
@@ -339,6 +341,49 @@ class writeRainflow(object):
                 except IOError:
                     print('no sheet named %s found in template table!' % sheetname)
         print('%s is done!' %self.rf_path)
+    # @pysnooper.snoop()
+    def write2singlexls(self, table):
+        # ---------------------------------------- #
+        # write DEL to excel (blade, tower)
+        # ---------------------------------------- #
+
+        sheet = table.get_sheet_by_name('Sheet')
+        row_start = 1
+
+        for i in range(len(self.rainflow)):
+
+            DEL = self.rainflow[i].DEL
+            varout = rv.reorderVariable(DEL['varlist'], self.variable)
+            print(varout)
+
+            sheet.cell(row_start, 1).value = self.dirlist[i]
+            # write variable
+            sheet.cell(row_start+1, 1).value = 'SN'
+            for ind, var in enumerate(varout):
+                sheet.cell(row_start+1, ind+2).value = var
+
+            # write unit
+            sheet.cell(row_start+2, 1).value = '-'
+            sheet.cell(row_start+2, 2).value = 'kNm'
+            sheet.cell(row_start+2, 3).value = 'kNm'
+            sheet.cell(row_start+2, 4).value = 'kNm'
+            sheet.cell(row_start+2, 5).value = 'kN'
+            sheet.cell(row_start+2, 6).value = 'kN'
+            sheet.cell(row_start+2, 7).value = 'kN'
+
+            # write m
+            m_list = [round(float(mvalue), 1) for mvalue in DEL['m']]
+            for ind, m in enumerate(m_list):
+                sheet.cell(row_start+2+ind+1, 1).value = m
+
+            # write del
+            for i, var in enumerate(varout):
+                data = DEL['var_del'][var]/1000
+                for j, val in enumerate(data):
+                    sheet.cell(row_start+2+j+1, i+1+1).value = val[0]
+
+            row_start += len((m_list))+4
+
 
 if __name__ == '__main__':
 
