@@ -121,7 +121,7 @@ class LoadOutputWindow(QMainWindow):
         self.btn3.clicked.connect(self.get_excel)
         # self.btn3.setDisabled(True)
 
-        self.label5 = QLabel('Txt/Excel')
+        self.label5 = QLabel('Excel Name')
         self.label5.setFont(QFont("Calibri", 10))
         self.line4  = MyQLineEdit()
         self.line4.setFont(QFont("Calibri", 10))
@@ -311,8 +311,12 @@ class LoadOutputWindow(QMainWindow):
                 elif xls_name:
                     if self.cbx.currentText() == 'Fatigue':
                         try:
-                            txt_path = os.path.join(res_path, xls_name+'.txt')
-                            writeRainflow(post_path, content=('DEL',)).write2singletxt(txt_path)
+                            # txt_path = os.path.join(res_path, xls_name+'.txt')
+                            xls_path = os.path.join(res_path, xls_name+'.xlsx')
+                            # writeRainflow(post_path, content=('DEL',)).write2singletxt(txt_path)
+                            table = openpyxl.Workbook()
+                            writeRainflow(post_path, content=('DEL',)).write2singlexls(table)
+                            table.save(xls_path)
                             QMessageBox.about(self, 'Window', 'Post export is done!')
                         except Exception as e:
                             QMessageBox.about(self, 'Warnning', 'Error occurs in generating fatigue loads!\n%s' %e)
